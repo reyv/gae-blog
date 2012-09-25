@@ -4,17 +4,22 @@ runtime: python27
 api_version: 1
 threadsafe: true
 
+skip_files:
+- ^(.*/)?.*~
+- ^(.*/)?.*\.py[co]
+- ^(.*/)?.*\.db
+
 handlers:
 - url: /favicon\.ico
   static_files: favicon.ico
   upload: favicon\.ico
   
-- url: /static/css
-  static_dir: static/css
+- url: /css
+  static_dir: css
   expiration: "7d"
 
-- url: /static/scripts
-  static_dir: static/scripts
+- url: /js
+  static_dir: js
   expiration: "7d"
   
 - url: .*
