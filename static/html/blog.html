@@ -1,23 +1,11 @@
-<html>
-
-<head>
-  <link type="text/css" rel="stylesheet" href="/static/css/main.css" />
-  <title>Udacity: Unit 3</title>
-</head>
-
-<body>
-
-  <h1>My Blog</h1>
-  <hr>
-  {% for item in blog_entries %}
-    <div class="blog_post">
-      <div class="blog_post_subject">{{item.subject}}</div>
-      <div class="blog_post_created"><em>{{item.created}}</em></div>
-      <div class="blog_post_content">{{item.content}}</div>
-      <hr noshade>
-    </div>	
-  {% endfor %}
-
-</body>
-
-</html>
+{% extends "base.html" %}
+  {% block main %}
+    {% for item in blog_entries %}
+      <div class="blog_post">
+        <div class="blog_post_subject">{{item.subject}}</div>
+        <div class="blog_post_created"><em>{{item.created}}</em></div>
+        <div class="blog_post_content">{{item.content}}</div>
+        <hr noshade>
+      </div>	
+    {% endfor %}
+  {% endblock %}

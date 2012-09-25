@@ -1,21 +1,10 @@
-<html>
-
-<head>
-  <link type="text/css" rel="stylesheet" href="/static/css/main.css" />
-  <title>Udacity: Unit 3</title>
-</head>
-
-<body>
-
-  <h1>My Blog</h1>
-  <hr>
+{% extends "base.html" %}
+{% block main %}  
+    <hr>
     <div class="blog_post">
       <div class="blog_post_subject">{{blog_post.subject}}</div>
       <div class="blog_post_created"><em>{{blog_post.created}}</em></div>
       <div class="blog_post_content">{{blog_post.content}}</div>
       <hr noshade>
     </div>	
-
-</body>
-
-</html>
+{% endblock %}

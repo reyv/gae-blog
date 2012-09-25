@@ -1,27 +1,14 @@
-<html>
-
-<head>
-  <link type="text/css" rel="stylesheet" href="/static/css/main.css" />
-  <title>Udacity: Unit 3</title>
-</head>
-
-<body>
-
-  <h1>New Blog Entry</h1>
-  
+{% extends "base.html" %}
+{% block main %}   
   <form method="post">
     <dl>
       <dt>Blog Post Title</dt>
-	<ds><input type="subject" name="subject" value="{{subject}}" /></ds>
-  
+	    <dd><input type="subject" name="subject" value="{{subject}}" /></dd>
       <dt>Blog Text</dt>
-	<ds><textarea name="content" cols="40" rows="8">{{content}}</textarea></ds>
+	    <dd><textarea name="content" cols="40" rows="8">{{content}}</textarea></dd>
     </dl>
     <br>
-    <input type="submit" value="Send">
+    <input type="submit" value="Submit Entry!">
     <div class="error">{{newpost_error}}</div>
-</form>
-
-</body>
-
-</html>
+  </form>
+{% endblock %}
