@@ -1,0 +1,19 @@
+body {
+  font-family: Verdana, Helvetica, sans-serif;
+  background-color: #DDDDDD;
+}
+
+.blog_post_subject{
+  font-weight:bold; 
+}
+
+textarea{
+  font-family: Verdana, Helvetica, sans-serif; 
+  
+}
+
+.error{
+	font-weight:bold; 
+	font-family: Verdana, Helvetica, sans-serif; 
+	color:red;
+}
