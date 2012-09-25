@@ -94,6 +94,11 @@ header {
   font-style: italic;
 }
 
+.blog_post_tag{
+  margin: 0 0 6px 10px;
+  font-style: italic;
+}
+
 /*New Post Areas*/
 textarea{
   font-family: Verdana, Helvetica, sans-serif; 

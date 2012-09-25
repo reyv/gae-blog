@@ -14,7 +14,7 @@ class BaseRequestHandler(webapp2.RequestHandler):
     self.response.out.write(template.render(template_values))
 
 class NewPostHandler(BaseRequestHandler):
-  
+  """Generages and Handles New Blog Post Entires."""
   def get(self):
     self.generate('newpost.html',{})
 
@@ -22,26 +22,32 @@ class NewPostHandler(BaseRequestHandler):
     subject = self.request.get('subject')
     content = self.request.get('content')
     content = content.replace('\n', '<br>')
+    tag = self.request.get('tag')
     
-    if subject and content:
-      blog_entry = BlogPost(subject=subject, content=content)
+    if subject and content and tag:
+      blog_entry = BlogPost(subject=subject, content=content, tag=tag)
       blog_entry.put()
       post_id = str(blog_entry.key().id())
+      blog_entry.post_id = post_id
+      blog_entry.put()
       self.redirect('/blog/%s' %post_id)
     else:
       self.generate('newpost.html', {
 		    'newpost_error':'Subject and content required.',
 		    'subject':subject,
-		    'content':content  
+		    'content':content,
+                    'tag':tag
                     })
 
 class BlogPostHandler(BaseRequestHandler):
+  """Main Blog Page Handler"""
   def get(self):
     blog_entries = db.GqlQuery("SELECT * FROM BlogPost ORDER BY created DESC LIMIT 10")     
     self.generate('blog.html',{'blog_entries':blog_entries})
 
 class PermalinkHandler(BaseRequestHandler):
   def get(self, post_id):
+    """Generator of permalink page for each blog entry"""
     post_num = int(post_id)           #postid variable gets passed in from the app variable (i.e. /blog/(\d+)) by placing () around desired url part
     blog_post = BlogPost.get_by_id(post_num)
 
@@ -54,10 +60,12 @@ class PermalinkHandler(BaseRequestHandler):
                     })
     
 class BlogPost(db.Model):
-  subject = db.TextProperty(required=True)
-  content = db.StringProperty(required=True)
+  """Model class for blog posts"""
+  subject = db.StringProperty(required=True)
+  content = db.TextProperty(required=True)
   created = db.DateTimeProperty(auto_now_add = True)
   last_modified = db.DateTimeProperty(auto_now = True)
+  post_id = db.StringProperty()
   tag = db.TextProperty()
        
 
