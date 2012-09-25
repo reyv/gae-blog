@@ -21,6 +21,7 @@ class NewPostHandler(BaseRequestHandler):
   def post(self):
     subject = self.request.get('subject')
     content = self.request.get('content')
+    content = content.replace('\n', '<br>')
     
     if valid_string(subject) and valid_string(content):
       blog_entry = BlogPost(subject=subject, content=content)
@@ -43,12 +44,17 @@ class PermalinkHandler(BaseRequestHandler):
   def get(self, postid):
     post_num = int(postid)           #postid variable gets passed in from the app variable (i.e. /blog/(\d+)) by placing () around desired url part
     blog_post = BlogPost.get_by_id(post_num)
-    self.generate('blogpost.html',{'blog_post':blog_post})
+
+    if not blog_post:
+      self.error(404)
+    else:
+      self.generate('blogpost.html',{'blog_post':blog_post})
     
 class BlogPost(db.Model):
   subject = db.TextProperty(required=True)
   content = db.StringProperty(required=True)
   created = db.DateTimeProperty(auto_now_add = True)
+  last_modified = db.DateTimeProperty(auto_now = True)
        
 def valid_string(item):
     if item:

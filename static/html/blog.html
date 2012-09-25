@@ -3,8 +3,8 @@
     {% for item in blog_entries %}
       <div class="blog_post">
         <div class="blog_post_subject">{{item.subject}}</div>
-        <div class="blog_post_created"><em>{{item.created}}</em></div>
-        <div class="blog_post_content">{{item.content}}</div>
+        <div class="blog_post_created"><em>{{item.created.strftime("%b %d,%Y")}}</em></div>
+        <div class="blog_post_content">{{item.content | safe}}</div>
         <hr noshade>
       </div>	
     {% endfor %}

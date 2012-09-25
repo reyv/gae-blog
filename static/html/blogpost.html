@@ -1,10 +1,9 @@
 {% extends "base.html" %}
 {% block main %}  
-    <hr>
     <div class="blog_post">
       <div class="blog_post_subject">{{blog_post.subject}}</div>
-      <div class="blog_post_created"><em>{{blog_post.created}}</em></div>
-      <div class="blog_post_content">{{blog_post.content}}</div>
+      <div class="blog_post_created"><em>{{blog_post.created.strftime("%b %d,%Y")}}</em></div>
+      <div class="blog_post_content">{{blog_post.content | safe}}</div>
       <hr noshade>
     </div>	
 {% endblock %}
