@@ -42,8 +42,16 @@ class NewPostHandler(BaseRequestHandler):
 class BlogPostHandler(BaseRequestHandler):
   """Main Blog Page Handler"""
   def get(self):
-    blog_entries = db.GqlQuery("SELECT * FROM BlogPost ORDER BY created DESC LIMIT 10")     
-    self.generate('blog.html',{'blog_entries':blog_entries})
+    blog_entries = db.GqlQuery("SELECT * FROM BlogPost ORDER BY created DESC LIMIT 10")
+
+    tag_entries = db.GqlQuery("SELECT tag FROM BlogPost")
+    tag_list = []
+    for item in tag_entries:
+      if item.tag not in tag_list:
+        tag_list.append(item.tag)
+    
+    self.generate('blog.html',{'blog_entries':blog_entries,
+                               'tag_list':tag_list})
 
 class PermalinkHandler(BaseRequestHandler):
   def get(self, post_id):
@@ -59,9 +67,16 @@ class PermalinkHandler(BaseRequestHandler):
                     'post_id':post_id
                     })
       
+class TagHandler(BaseRequestHandler):
+  """Tag Page Handler"""
+  def get(self, tag_name):
+    blog_entries = db.GqlQuery("SELECT * FROM BlogPost WHERE tag='%s'" %tag_name)     
+    self.generate('blog.html',{'blog_entries':blog_entries})
+
 app = webapp2.WSGIApplication([('/blog/?',BlogPostHandler),
                                ('/blog/newpost', NewPostHandler),
-                               ('/blog/(\d+)', PermalinkHandler)],
+                               ('/blog/(\d+)', PermalinkHandler),
+                               ('/blog/tags/(\S+)', TagHandler)],
                                 debug=True)
 
                               

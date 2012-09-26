@@ -7,4 +7,4 @@ class BlogPost(db.Model):
   created = db.DateTimeProperty(auto_now_add = True)
   last_modified = db.DateTimeProperty(auto_now = True)
   post_id = db.StringProperty()
-  tag = db.TextProperty()
+  tag = db.StringProperty(required=True)

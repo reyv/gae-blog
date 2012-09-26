@@ -5,8 +5,19 @@
         <div class="blog_post_subject"><h3><a href="/blog/{{item.post_id}}">{{item.subject}}</a></h3></div>
         <div class="blog_post_created"><em>{{item.created.strftime("%b %d,%Y")}}</em></div>
         <div class="blog_post_content">{{item.content | safe}}</div>
-		<div class="blog_post_tag">{{item.tag}}</div>
+		<div class="blog_post_tag"><a href="/blog/tags/{{item.tag}}">{{item.tag}}</a></div>
         <hr noshade>
       </article>	
     {% endfor %}
+  {% endblock %}
+  
+  <!--Automatically inserts new tags in the side bar once a tag is created-->
+  {% block sidebar %}
+    <div class="tag_header"><h3>Tags</h3></div>
+	<textarea>{{tag_list}}</textarea>
+	<ul>
+	  {% for item in tag_list %}
+	    <li><a href="/blog/tags/{{item}}">{{item}}</a></li>
+	  {% endfor %}
+	</ul>
   {% endblock %}
