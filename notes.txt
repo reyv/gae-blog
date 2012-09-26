@@ -1,0 +1,7 @@
+Downloaded 9/24/2012 from initializer.com
+
+HTML5 Boilerplate v4.0.0
+Twitter Bootstrap v2.1.1
+Modernizer v2.6.1
+jQuery v1.8.1
+

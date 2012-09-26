@@ -1,4 +1,4 @@
-import webapp2, os, jinja2, re
+import webapp2, os, jinja2, models
 from google.appengine.ext import db
 
 class BaseRequestHandler(webapp2.RequestHandler):
@@ -25,7 +25,7 @@ class NewPostHandler(BaseRequestHandler):
     tag = self.request.get('tag')
     
     if subject and content and tag:
-      blog_entry = BlogPost(subject=subject, content=content, tag=tag)
+      blog_entry = models.BlogPost(subject=subject, content=content, tag=tag)
       blog_entry.put()
       post_id = str(blog_entry.key().id())
       blog_entry.post_id = post_id
@@ -49,7 +49,7 @@ class PermalinkHandler(BaseRequestHandler):
   def get(self, post_id):
     """Generator of permalink page for each blog entry"""
     post_num = int(post_id)           #postid variable gets passed in from the app variable (i.e. /blog/(\d+)) by placing () around desired url part
-    blog_post = BlogPost.get_by_id(post_num)
+    blog_post = models.BlogPost.get_by_id(post_num)
 
     if not blog_post:
       self.generate('404.html',{})
@@ -58,17 +58,7 @@ class PermalinkHandler(BaseRequestHandler):
                     'blog_post':blog_post,
                     'post_id':post_id
                     })
-    
-class BlogPost(db.Model):
-  """Model class for blog posts"""
-  subject = db.StringProperty(required=True)
-  content = db.TextProperty(required=True)
-  created = db.DateTimeProperty(auto_now_add = True)
-  last_modified = db.DateTimeProperty(auto_now = True)
-  post_id = db.StringProperty()
-  tag = db.TextProperty()
-       
-
+      
 app = webapp2.WSGIApplication([('/blog/?',BlogPostHandler),
                                ('/blog/newpost', NewPostHandler),
                                ('/blog/(\d+)', PermalinkHandler)],
