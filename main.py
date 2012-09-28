@@ -1,4 +1,4 @@
-import webapp2, os, jinja2, models
+import webapp2, os, jinja2, models, urllib
 from google.appengine.ext import db
 
 class BaseRequestHandler(webapp2.RequestHandler):
@@ -70,8 +70,9 @@ class PermalinkHandler(BaseRequestHandler):
 class TagHandler(BaseRequestHandler):
   """Tag Page Handler"""
   def get(self, tag_name):
-    blog_entries = db.GqlQuery("SELECT * FROM BlogPost WHERE tag='%s'" %tag_name)     
+    blog_entries = db.GqlQuery("SELECT * FROM BlogPost WHERE tag='%s'" %unicode(tag_name))     
     self.generate('blog.html',{'blog_entries':blog_entries})
+
 
 app = webapp2.WSGIApplication([('/blog/?',BlogPostHandler),
                                ('/blog/newpost', NewPostHandler),
