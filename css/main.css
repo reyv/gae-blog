@@ -10,13 +10,12 @@ body {
 	
 	display: -moz-box;
 	-moz-box-pack: center;
-	
-	border: 1px solid red;
 }
 
 .big_wrapper{
 	max-width:1000px;
-	background-color: #DDDDDD;
+	min-height: 500px;
+	/*background-color: #DDDDDD;*/
 	margin:5px 50px 10px 50px;
 	display: -webkit-box;
 	border-radius:6px;
@@ -27,52 +26,11 @@ body {
 	display: -moz-box;
 	-moz-box-orient: vertical;
 	-moz-box-flex: 1;
-	
-	border: 1px solid blue;
-}
-
-
-.main_wrapper{
-	display: -webkit-box;
-	-webkit-box-orient: horizontal;
-	-webkit-box-flex: 1;
-	
-	display: -moz-box;
-	-moz-box-orient: horizontal;
-	-moz-box-flex: 1;
-	
-	border: 1px solid cyan;
-}
-
-
-.blog_entries{
-	display: -webkit-box;
-	-webkit-box-orient: vertical;
-	-webkit-box-flex: 1;
-	
-	display: -moz-box;
-	-moz-box-orient: vertical;
-	-moz-box-flex: 1;
-	
-	border: 1px solid black;
-
-}
-
-.side_navigation{
-	display: -webkit-box;
-	-webkit-box-orient: vertical;
-	-webkit-box-flex: 1;
-	
-	display: -moz-box;
-	-moz-box-orient: vertical;
-	-moz-box-flex: 1;
-	
-	border: 1px solid black;
 }
 
 /*Header*/
 header {
-	border: 1px solid black;
+margin-top:25px;
 }
 .page_title{
 	text-align:center;
