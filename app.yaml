@@ -21,6 +21,10 @@ handlers:
 - url: /js
   static_dir: js
   expiration: "7d"
+
+- url: /img
+  static_dir: img
+  expiration: "7d"
   
 - url: .*
   script: main.app

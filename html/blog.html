@@ -1,5 +1,6 @@
 {% extends "base.html" %}
   {% block main %}
+    <span class="page">home</span>
     {% for item in blog_entries %}
       <article class="blog_post">
         <div class="blog_post_subject"><h3><a href="/blog/{{item.post_id}}">{{item.subject}}</a></h3></div>

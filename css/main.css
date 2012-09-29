@@ -28,12 +28,16 @@ body {
 	-moz-box-flex: 1;
 }
 
+.page{
+  display:none;
+}
+
 /*Header*/
 header {
-margin-top:25px;
+  margin-top:25px;
 }
 .page_title{
-	text-align:center;
+  text-align:center;
 }
 
 /*Blog Post Pages*/
@@ -63,12 +67,21 @@ textarea{
 }
 
 .error{
-	font-weight:bold; 
-	font-family: Verdana, Helvetica, sans-serif; 
-	color:red;
+  font-weight:bold; 
+  font-family: Verdana, Helvetica, sans-serif; 
+  color:red;
 }
 
 /*Footer*/
 footer{
-	text-align:center;
+  text-align:center;
+}
+
+
+/*Social*/
+
+.main_social{
+	padding: 4px;
+	display: inline-block;
+	float: right;
 }

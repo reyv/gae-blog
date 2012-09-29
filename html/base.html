@@ -10,7 +10,7 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
 
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bootstrap.css">
     <link rel="stylesheet" href="/css/bootstrap-responsive.min.css">
     <link rel="stylesheet" href="/css/main.css">
     <script src="/js/vendor/modernizr-2.6.1-respond-1.1.0.min.js"></script>
@@ -31,10 +31,13 @@
             <a class="brand" href="/blog">My Blog</a>
             <div class="nav-collapse collapse">
               <ul class="nav">
-                <li class="active"><a href="/blog">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="/blog">Home</a></li>
+                <li><a href="/blog/about">About</a></li>
+                <li><a href="/blog/contact">Contact</a></li>
               </ul>
+	        <a class="main_social" href="http://www.twitter.com/#" target="_blank"><img src="/img/main_social/twitter.png"></a>
+		<a class="main_social" href="http://www.linkedin.com/company/#" target="_blank"><img src="/img/main_social/linked-in.png"></a>
+		<a class="main_social" href="https://plus.google.com/#" target="_blank"><img src="/img/main_social/g_plus.png"></a>
             </div><!--/.nav-collapse -->
           </div>
         </div>
@@ -49,9 +52,9 @@
             <div class="well sidebar-nav">
               <ul class="nav nav-list">
                 <li class="nav-header">Site Menu</li>
-                <li class="active"><a href="/blog">Home</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Contact</a></li>
+                <li><a href="/blog">Home</a></li>
+                <li><a href="/blog/about">About</a></li>
+                <li><a href="/blog/contact">Contact</a></li>
                 <li class="nav-header">Tags</li>
 				<!--Automatically inserts new tags in the side bar once a tag is created-->
                 {% for item in tag_list %}

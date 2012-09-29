@@ -73,9 +73,22 @@ class TagHandler(BaseRequestHandler):
     blog_entries = db.GqlQuery("SELECT * FROM BlogPost WHERE tag='%s'" %unicode(tag_name))     
     self.generate('blog.html',{'blog_entries':blog_entries})
 
+class AboutHandler(BaseRequestHandler):
+  """About Page Handler"""
+  def get(self):
+    self.generate('about.html',{})
+
+class ContactHandler(BaseRequestHandler):
+  """Contact Page Handler"""
+  def get(self):
+    self.generate('contact.html',{})
+    
+    
 
 app = webapp2.WSGIApplication([('/blog/?',BlogPostHandler),
                                ('/blog/newpost', NewPostHandler),
+                               ('/blog/about', AboutHandler),
+                               ('/blog/contact', ContactHandler),
                                ('/blog/(\d+)', PermalinkHandler),
                                ('/blog/tags/(\S+)', TagHandler)],
                                 debug=True)
