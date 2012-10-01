@@ -1,4 +1,5 @@
 import webapp2, os, jinja2, models, urllib
+from collections import Counter
 from google.appengine.ext import db
 
 class BaseRequestHandler(webapp2.RequestHandler):
@@ -13,10 +14,17 @@ class BaseRequestHandler(webapp2.RequestHandler):
     template = jinja_environment.get_template(template_name)
     self.response.out.write(template.render(template_values))
 
+  def generate_tag_list(self):
+    tag_entries = db.GqlQuery("SELECT tag FROM BlogPost")
+    tags_all = [str(item.tag) for item in tag_entries]
+    return Counter(tags_all)
+
 class NewPostHandler(BaseRequestHandler):
   """Generages and Handles New Blog Post Entires."""
   def get(self):
-    self.generate('newpost.html',{})
+    self.generate('newpost.html',{
+                  'tag_list':self.generate_tag_list()
+                  })
 
   def post(self):
     subject = self.request.get('subject')
@@ -36,22 +44,17 @@ class NewPostHandler(BaseRequestHandler):
 		    'newpost_error':'Subject and content required.',
 		    'subject':subject,
 		    'content':content,
-                    'tag':tag
+                    'tag':tag,
+                    'tag_list':self.generate_tag_list()
                     })
 
 class BlogPostHandler(BaseRequestHandler):
   """Main Blog Page Handler"""
   def get(self):
-    blog_entries = db.GqlQuery("SELECT * FROM BlogPost ORDER BY created DESC LIMIT 10")
-
-    tag_entries = db.GqlQuery("SELECT tag FROM BlogPost")
-    tag_list = []
-    for item in tag_entries:
-      if item.tag not in tag_list:
-        tag_list.append(item.tag)
-    
+    blog_entries = db.GqlQuery("SELECT * FROM BlogPost ORDER BY created DESC LIMIT 10")  
     self.generate('blog.html',{'blog_entries':blog_entries,
-                               'tag_list':tag_list})
+                               'tag_list':self.generate_tag_list()
+                  })
 
 class PermalinkHandler(BaseRequestHandler):
   def get(self, post_id):
@@ -64,33 +67,39 @@ class PermalinkHandler(BaseRequestHandler):
     else:
       self.generate('blogpost.html',{
                     'blog_post':blog_post,
-                    'post_id':post_id
+                    'post_id':post_id,
+                    'tag_list':self.generate_tag_list()
                     })
       
 class TagHandler(BaseRequestHandler):
   """Tag Page Handler"""
   def get(self, tag_name):
-    blog_entries = db.GqlQuery("SELECT * FROM BlogPost WHERE tag='%s'" %unicode(tag_name))     
-    self.generate('blog.html',{'blog_entries':blog_entries})
+    blog_entries = db.GqlQuery("SELECT * FROM BlogPost WHERE tag='%s'" %tag_name)     
+    self.generate('blog.html',{
+                  'blog_entries':blog_entries,
+                  'tag_list':self.generate_tag_list()
+                  })
 
 class AboutHandler(BaseRequestHandler):
   """About Page Handler"""
   def get(self):
-    self.generate('about.html',{})
+    self.generate('about.html',{
+                  'tag_list':self.generate_tag_list()
+                  })
 
 class ContactHandler(BaseRequestHandler):
   """Contact Page Handler"""
   def get(self):
-    self.generate('contact.html',{})
+    self.generate('contact.html',{
+                  'tag_list':self.generate_tag_list()
+                  })
     
-    
-
 app = webapp2.WSGIApplication([('/blog/?',BlogPostHandler),
                                ('/blog/newpost', NewPostHandler),
                                ('/blog/about', AboutHandler),
                                ('/blog/contact', ContactHandler),
                                ('/blog/(\d+)', PermalinkHandler),
-                               ('/blog/tags/(\S+)', TagHandler)],
+                               ('/blog/tags/(.*)', TagHandler)],
                                 debug=True)
 
                               

@@ -57,8 +57,8 @@
                 <li><a href="/blog/contact">Contact</a></li>
                 <li class="nav-header">Tags</li>
 				<!--Automatically inserts new tags in the side bar once a tag is created-->
-                {% for item in tag_list %}
-	              <li><a href="/blog/tags/{{item}}">{{item}}</a></li>
+                {% for item in tag_list.items() %}
+	              <li><a href="/blog/tags/{{item[0]}}">{{item[0]}} ({{item[1]}})</a></li>
 	            {% endfor %}
             </div><!--/.well -->
           </div><!--/span-->
