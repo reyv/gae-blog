@@ -16,8 +16,9 @@ class BaseRequestHandler(webapp2.RequestHandler):
 
   def generate_tag_list(self):
     tag_entries = db.GqlQuery("SELECT tag FROM BlogPost")
-    tags_all = [str(item.tag) for item in tag_entries]
-    return Counter(tags_all)
+    tags_all = [str(item.tag) for item in tag_entries]   #excecute query
+    c = Counter(tags_all)                                #provides dictionary with count of each tag
+    return sorted(c.iteritems())
 
 class NewPostHandler(BaseRequestHandler):
   """Generages and Handles New Blog Post Entires."""
@@ -101,6 +102,3 @@ app = webapp2.WSGIApplication([('/blog/?',BlogPostHandler),
                                ('/blog/(\d+)', PermalinkHandler),
                                ('/blog/tags/(.*)', TagHandler)],
                                 debug=True)
-
-                              
-#dev_appserver.py Dropbox/Programming/GAE/Udacity/Unit\ 2/HW1

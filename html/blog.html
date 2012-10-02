@@ -6,7 +6,7 @@
         <div class="blog_post_subject"><h3><a href="/blog/{{item.post_id}}">{{item.subject}}</a></h3></div>
         <div class="blog_post_created"><em>{{item.created.strftime("%b %d,%Y")}}</em></div>
         <div class="blog_post_content">{{item.content | safe}}</div>
-		<div class="blog_post_tag"><a href="/blog/tags/{{item.tag}}">{{item.tag}}</a></div>
+		<div class="blog_post_tag">tag: <a href="/blog/tags/{{item.tag}}">{{item.tag}}</a></div>
         <hr noshade>
       </article>	
     {% endfor %}
