@@ -77,9 +77,7 @@ class TagHandler(BaseRequestHandler):
   def get(self, tag_name):
     tag_list = dict(self.generate_tag_list())
     if tag_name not in tag_list.keys():
-      self.generate('blog.html', {
-                    'error_message':'Sorry, that tag has not been found!'
-                    })
+      self.redirect('/blog')
     else:
       blog_entries = db.GqlQuery("SELECT * FROM BlogPost WHERE tag='%s'" %tag_name) 
       self.generate('blog.html',{
