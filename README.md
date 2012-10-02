@@ -11,8 +11,8 @@ This blog uses the following:
 
 - Google App Engine
 - Python 2.7
-- HTML5 Boilerplate v4.0.0 (via the initializer.com)
-- Titter Bootstrap v2.1.1 (via the initializer.com)
-- Modernizer v2.6.1 (via the initializer.com)
-- jQuery v1.8.1 (via the initializer.com)
+- HTML5 Boilerplate v4.0.0 (via the initializr.com)
+- Titter Bootstrap v2.1.1 (via the initializr.com)
+- Modernizer v2.6.1 (via the initializr.com)
+- jQuery v1.8.1 (via the initializr.com)
 - jinja2 templates (via Google App Engine)
