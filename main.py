@@ -16,9 +16,9 @@ class BaseRequestHandler(webapp2.RequestHandler):
 
   def generate_tag_list(self):
     tag_entries = db.GqlQuery("SELECT tag FROM BlogPost")
-    tags_all = [str(item.tag) for item in tag_entries]   #excecute query
-    c = Counter(tags_all)                                #provides dictionary with count of each tag
-    return sorted(c.iteritems())
+    tags_all = [str(item.tag) for item in tag_entries]    #excecute query
+    c = Counter(tags_all)                                 #provides dict with count of each tag
+    return sorted(c.iteritems())                          #returns list w/ tuples in alphabetic order
 
 class NewPostHandler(BaseRequestHandler):
   """Generages and Handles New Blog Post Entires."""
@@ -71,15 +71,21 @@ class PermalinkHandler(BaseRequestHandler):
                     'post_id':post_id,
                     'tag_list':self.generate_tag_list()
                     })
-      
+   
 class TagHandler(BaseRequestHandler):
   """Tag Page Handler"""
   def get(self, tag_name):
-    blog_entries = db.GqlQuery("SELECT * FROM BlogPost WHERE tag='%s'" %tag_name)     
-    self.generate('blog.html',{
-                  'blog_entries':blog_entries,
-                  'tag_list':self.generate_tag_list()
-                  })
+    tag_list = dict(self.generate_tag_list())
+    if tag_name not in tag_list.keys():
+      self.generate('blog.html', {
+                    'error_message':'Sorry, that tag has not been found!'
+                    })
+    else:
+      blog_entries = db.GqlQuery("SELECT * FROM BlogPost WHERE tag='%s'" %tag_name) 
+      self.generate('blog.html',{
+                    'blog_entries':blog_entries,
+                    'tag_list':self.generate_tag_list()
+                    })
 
 class AboutHandler(BaseRequestHandler):
   """About Page Handler"""

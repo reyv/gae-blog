@@ -32,6 +32,11 @@ body {
   display:none;
 }
 
+.main_error_msg{
+  color: red;
+  text-align:center;
+}
+
 /*Header*/
 header {
   margin-top:25px;
