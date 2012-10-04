@@ -9,8 +9,10 @@ web development.
 
 This blog uses the following:
 
-- Google App Engine
 - Python 2.7
+- Google App Engine
+- Google's db library
+- Google's Gql for queries
 - HTML5 Boilerplate v4.0.0 (via the initializr.com)
 - Titter Bootstrap v2.1.1 (via the initializr.com)
 - Modernizer v2.6.1 (via the initializr.com)

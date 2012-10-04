@@ -1,4 +1,4 @@
-import webapp2, os, jinja2, models, urllib
+import webapp2, os, jinja2, models, urllib, config
 from collections import Counter
 from google.appengine.ext import db
 
@@ -34,7 +34,7 @@ class NewPostHandler(BaseRequestHandler):
     tag = self.request.get('tag')
     
     if subject and content and tag:
-      blog_entry = models.BlogPost(subject=subject, content=content, tag=tag)
+      blog_entry = models.BlogPost(subject=subject, content=content, tag=tag, author=config.blog_author)
       blog_entry.put()
       post_id = str(blog_entry.key().id())
       blog_entry.post_id = post_id

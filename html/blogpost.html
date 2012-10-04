@@ -1,10 +1,11 @@
 {% extends "base.html" %}
 {% block main %}  
     <article class="blog_post">
-      <div class="blog_post_subject"><h3><a href="/blog/{{blog_post.post_id}}">{{blog_post.subject}}</a></h3></div>
-      <div class="blog_post_created">{{blog_post.created.strftime("%b %d,%Y")}}</div>
-      <div class="blog_post_content">{{blog_post.content | safe}}</div>
-	  <div class="blog_post_tag">tag: <a href="/blog/tags/{{blog_post.tag}}">{{blog_post.tag}}</a></div>
+      <div class="blog_post post_subject"><h3><a href="/blog/{{blog_post.post_id}}">{{blog_post.subject}}</a></h3></div>
+      <div class="blog_post post_author">By: {{blog_post.author}}</div>
+      <div class="blog_post post_created">{{blog_post.created.strftime("%b %d,%Y")}}</div>
+      <div class="blog_post post_content">{{blog_post.content | safe}}</div>
+      <div class="blog_post post_tag">tag: <a href="/blog/tags/{{blog_post.tag}}">{{blog_post.tag}}</a></div>
       <hr noshade>
     </article>	
 {% endblock %}

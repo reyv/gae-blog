@@ -3,13 +3,15 @@
     <span class="page">home</span>
     {% for item in blog_entries %}
       <article class="blog_post">
-        <div class="blog_post_subject"><h3><a href="/blog/{{item.post_id}}">{{item.subject}}</a></h3></div>
-        <div class="blog_post_created"><em>{{item.created.strftime("%b %d,%Y")}}</em></div>
-        <div class="blog_post_content">{{item.content | safe}}</div>
-		<div class="blog_post_tag">tag: <a href="/blog/tags/{{item.tag}}">{{item.tag}}</a></div>
-        <hr noshade>
+        <div class="blog_post post_subject"><h3>{{item.subject}}</h3></div>
+        <div class="blog_post post_author">By: {{item.author}}</div>
+        <div class="blog_post post_created"><em>{{item.created.strftime("%b %d,%Y")}}</em></div>
+        <div class="blog_post post_content">{{item.content[:350]+'...' | safe}}</div>
+	<div class="blog_post post_readmore"><a href="/blog/{{item.post_id}}">Read More</a></div>
+	<div class="blog_post post_tag">tag: <a href="/blog/tags/{{item.tag}}">{{item.tag}}</a></div>
+        <hr>
       </article>	
     {% endfor %}
   {% endblock %}
-  
+ 
   

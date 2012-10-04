@@ -46,24 +46,40 @@ header {
 }
 
 /*Blog Post Pages*/
-.blog_post_subject{
-  font-weight:bold; 
+
+.blog_post{
   margin-left:10px;
+  
+}
+.post_subject{
+  font-weight:bold; 
 }
 
-.blog_post_created{
-  margin: 0 0 6px 10px;
+.post_created{
+  font-style: italic;
+  margin-bottom: 10px;
+}
+
+.post_content{
+  margin-bottom: 16px;
+}
+
+.post_tag{
+  margin-top: 16px;
   font-style: italic;
 }
 
-.blog_post_content{
-  margin: 0 0 6px 10px;
+.post_author{
   font-style: italic;
 }
 
-.blog_post_tag{
-  margin: 0 0 6px 10px;
-  font-style: italic;
+.post_readmore{
+  margin: 0px 0 6px 10px;
+  padding: 3px 3px 3px 3px;
+  width:72px;
+  height:20px;
+  border-radius: 6px;
+  background-color:#EEE;
 }
 
 /*New Post Areas*/
