@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block main %}   
-  <form class="form-horizontal" method="post">
+  <form method="post">
   
   <div class="control-group">
     <label class="control-label" for="inputText">Blog Post Title</label>
@@ -12,7 +12,7 @@
   <div class="control-group">
     <label class="control-label" for="inputText">Blog Post Content</label>
     <div class="controls">
-      <textarea class="input-xlarge" name="content" rows="15" placeholder = "Blog Post Title" required>{{content | safe}}</textarea>
+      <textarea class="input-xxlarge" name="content" rows="15" placeholder = "Blog Post Title" required>{{content | safe}}</textarea>
     </div>
   </div>
   
