@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+  {% block main %}
+	<h3>Admin Login</h3>
+	<form method="post">
+		<table>
+			<tr>
+				<td>Username:</td>
+				<td><input type="text" name="username" value="{{username}}"></td>
+				<td class="error">{{error_username}}</td>
+			</tr>
+			<tr>
+				<td>Password:</td>
+				<td><input type="password" name="password" /></td>
+				<td class="error">{{error_password}}</td>
+			</tr>
+		</table>
+		<div class="error">{{error_login}}</div>
+		<br>
+		<input type="submit" value="Enter!">	
+		
+	</form>	
+  {% endblock %}

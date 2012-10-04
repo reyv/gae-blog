@@ -1,4 +1,4 @@
-import webapp2, os, jinja2, models, urllib, config
+import webapp2, os, jinja2, models, urllib, config, secure
 from collections import Counter
 from google.appengine.ext import db
 
@@ -20,13 +20,32 @@ class BaseRequestHandler(webapp2.RequestHandler):
     c = Counter(tags_all)                                 #provides dict with count of each tag
     return sorted(c.iteritems())                          #returns list w/ tuples in alphabetic order
 
+  def set_secure_cookie(self, name, value):
+    hashed_user = secure.make_secure_val(value)
+    self.response.headers.add_header('Set-Cookie','%s=%s; Path=/' %(name, hashed_user))
+
+  def remove_secure_cookie(self, name):
+    self.response.headers.add_header('Set-Cookie','%s=; Path=/' %name)
+
+  def check_secure_cookie(self, hash_val):
+    return secure.check_secure_val(hash_val)
+   
 class NewPostHandler(BaseRequestHandler):
   """Generages and Handles New Blog Post Entires."""
-  def get(self):
-    self.generate('newpost.html',{
-                  'tag_list':self.generate_tag_list()
-                  })
 
+  def get(self):
+    user_id_cookie_val = self.request.cookies.get('user_id')
+    user_id = user_id_cookie_val.split('|')[0]
+    if self.check_secure_cookie(user_id_cookie_val):
+      user_key = db.Key.from_path('Admin', int(user_id))
+      user = db.get(user_key)
+      self.generate('newpost.html',{
+                    'tag_list':self.generate_tag_list()
+                    })
+    else:
+      self.redirect('/blog/login')
+      return
+   
   def post(self):
     subject = self.request.get('subject')
     content = self.request.get('content')
@@ -40,6 +59,7 @@ class NewPostHandler(BaseRequestHandler):
       blog_entry.post_id = post_id
       blog_entry.put()
       self.redirect('/blog/%s' %post_id)
+      return
     else:
       self.generate('newpost.html', {
 		    'newpost_error':'Subject and content required.',
@@ -78,6 +98,7 @@ class TagHandler(BaseRequestHandler):
     tag_list = dict(self.generate_tag_list())
     if tag_name not in tag_list.keys():
       self.redirect('/blog')
+      return
     else:
       blog_entries = db.GqlQuery("SELECT * FROM BlogPost WHERE tag='%s'" %tag_name) 
       self.generate('blog.html',{
@@ -85,6 +106,38 @@ class TagHandler(BaseRequestHandler):
                     'tag_list':self.generate_tag_list()
                     })
 
+class LoginHandler(BaseRequestHandler):
+  """Admin Login Page Handler"""
+  def get(self):
+    self.generate('login.html',{})
+    
+  def post(self):
+    username = str(self.request.get('username'))
+    password = str(self.request.get('password'))
+
+    user = models.Admin.login_validation(username)
+
+    if user and secure.valid_pw(username, password, user.admin_pw_hash):
+      if secure.valid_pw(username, password, user.admin_pw_hash):
+        self.set_secure_cookie('user_id',str(user.key().id()))
+        self.redirect('/blog/newpost')
+        return
+      else:
+        self.generate('login.html', {
+                      'username':username,
+                      'error_login':'Invalid username and/or password'
+                      })
+    else:
+      self.generate('login.html', {
+                    'error_login':'User does not exist'
+                    })
+
+class LogoutHandler(BaseRequestHandler):
+  """Logout Handler"""
+  def get(self):
+    self.remove_secure_cookie('user_id')
+    self.redirect('/blog')
+  
 class AboutHandler(BaseRequestHandler):
   """About Page Handler"""
   def get(self):
@@ -98,11 +151,23 @@ class ContactHandler(BaseRequestHandler):
     self.generate('contact.html',{
                   'tag_list':self.generate_tag_list()
                   })
-    
+
+class AdminHandler(BaseRequestHandler):
+  #FOR TESTING PURPOSES ONLY
+  def get(self):
+    pw_hash = secure.make_pw_hash(config.admin_username, config.admin_pw)
+    admin = models.Admin(admin_username = config.admin_username, admin_pw_hash = pw_hash)
+    admin.put()
+    self.redirect('/blog')
+    return
+ 
 app = webapp2.WSGIApplication([('/blog/?',BlogPostHandler),
                                ('/blog/newpost', NewPostHandler),
                                ('/blog/about', AboutHandler),
                                ('/blog/contact', ContactHandler),
+                               ('/blog/login', LoginHandler),
+                               ('/blog/logout', LogoutHandler),
+                               ('/blog/admin',AdminHandler),
                                ('/blog/(\d+)', PermalinkHandler),
                                ('/blog/tags/(.*)', TagHandler)],
                                 debug=True)
