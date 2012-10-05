@@ -2,21 +2,34 @@
   {% block main %}
 	<h3>Admin Login</h3>
 	<form method="post">
-		<table>
-			<tr>
-				<td>Username:</td>
-				<td><input type="text" name="username" value="{{username}}"></td>
-				<td class="error">{{error_username}}</td>
-			</tr>
-			<tr>
-				<td>Password:</td>
-				<td><input type="password" name="password" /></td>
-				<td class="error">{{error_password}}</td>
-			</tr>
-		</table>
-		<div class="error">{{error_login}}</div>
-		<br>
-		<input type="submit" value="Enter!">	
-		
+      <div class="control-group">
+        <label class="control-label" for="inputText">Username</label>
+        <div class="controls">
+         <input class="input-large" type="text" name="username" value="{{username}}" placeholder="Username..." required />
+        </div>
+      </div>
+	
+	  <div class="control-group">
+        <label class="control-label" for="inputText">Password</label>
+        <div class="controls">
+         <input class="input-large" type="password" name="password" placeholder="Password..." required />
+        </div>
+      </div>
+	  
+	  <div class="control-group">
+        <label class="control-label"></label>
+        <div class="controls">
+          <input class="btn btn-info" type="submit" value="Login">
+        </div>
+      </div>
+    
+      <div class="control-group">
+        <label class="control-label"></label>
+        <div class="controls">
+          <div class="error">{{error_login}}</div>
+        </div>
+      </div>
 	</form>	
   {% endblock %}
+  
+  
