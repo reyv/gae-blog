@@ -152,6 +152,7 @@ class LogoutHandler(BaseRequestHandler):
   def get(self):
     self.remove_secure_cookie('user_id')
     self.redirect('/blog')
+    return
   
 class AboutHandler(BaseRequestHandler):
   """About Page Handler"""
@@ -174,6 +175,46 @@ class ContactHandler(BaseRequestHandler):
                   'tag_list':self.generate_tag_list(),
                   'user':user
                   })
+    
+class PasswordChangeHandler(BaseRequestHandler):
+  """Change Password Page Handler"""
+  def get(self):
+    user = None
+    if not self.check_secure_cookie():
+      self.redirect('/blog')
+      return
+    else:
+      user='admin'
+      self.generate('pw-change.html',{'user':user})
+    
+  def post(self):
+    user = 'admin'
+    password = str(self.request.get('password'))
+    verify_password = str(self.request.get('verify_password'))
+
+    if password != verify_password:
+      self.generate('pw-change.html', {
+                    'error_change_pw':'Passwords do not match. Please retry.',
+                    'user':user
+                    })
+    elif len(password) < 6:
+      self.generate('pw-change.html', {
+                    'error_change_pw':'Password must be greater than 6 characters.',
+                    'user':user
+                    })
+    else:
+      self.remove_secure_cookie('user-id')
+      user_id_cookie_val = self.request.cookies.get('user_id')
+      user_id = user_id_cookie_val.split('|')[0]
+      user_key = db.Key.from_path('Admin', int(user_id))
+      user = db.get(user_key)
+      user.admin_pw_hash = secure.make_pw_hash(user.admin_username, password)
+      user.put()
+      self.set_secure_cookie('user-id', str(user_id))
+      self.generate('pw-change.html',{'error_change_pw': 'Password change successful.',
+                                      'user':user
+                                      })
+
 
 class AdminHandler(BaseRequestHandler):
   #FOR TESTING PURPOSES ONLY
@@ -191,6 +232,7 @@ app = webapp2.WSGIApplication([('/blog/?',BlogPostHandler),
                                ('/blog/login', LoginHandler),
                                ('/blog/logout', LogoutHandler),
                                ('/blog/admin',AdminHandler),
+                               ('/blog/pwchange',PasswordChangeHandler),
                                ('/blog/(\d+)', PermalinkHandler),
                                ('/blog/tags/(.*)', TagHandler)],
                                 debug=True)
