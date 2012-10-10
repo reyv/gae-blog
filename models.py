@@ -24,3 +24,9 @@ class Admin(db.Model):
       return q[0]
     except IndexError:
       return None
+    
+  @classmethod  
+  def get_user(cls, user_id_cookie_val):
+    user_id = user_id_cookie_val.split('|')[0]
+    user_key = db.Key.from_path('Admin', int(user_id))
+    return db.get(user_key)

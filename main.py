@@ -1,4 +1,11 @@
-import webapp2, os, jinja2, models, urllib, config, secure
+import webapp2
+import os
+import urllib
+import jinja2
+import models
+import config
+import secure
+
 from collections import Counter
 from google.appengine.ext import db
 
@@ -28,10 +35,13 @@ class BaseRequestHandler(webapp2.RequestHandler):
     self.response.headers.add_header('Set-Cookie','%s=; Path=/' %name)
 
   def check_secure_cookie(self):
-    user_id_cookie_val = self.request.cookies.get('user_id')
-    user_id = user_id_cookie_val.split('|')[0]
-    return secure.check_secure_val(user_id_cookie_val)
-   
+    try:
+      user_id_cookie_val = self.request.cookies.get('user_id')
+      user_id = user_id_cookie_val.split('|')[0]
+      return secure.check_secure_val(user_id_cookie_val)
+    except AttributeError:
+      return None
+       
 class NewPostHandler(BaseRequestHandler):
   """Generages and Handles New Blog Post Entires."""
 
@@ -123,6 +133,7 @@ class LoginHandler(BaseRequestHandler):
   def get(self):
     if self.check_secure_cookie():
       self.redirect('/blog')
+      return
     else:
       self.generate('login.html',{})
     
@@ -175,7 +186,56 @@ class ContactHandler(BaseRequestHandler):
                   'tag_list':self.generate_tag_list(),
                   'user':user
                   })
+
+class AdminPrefHandler(BaseRequestHandler):
+  """Admin Preferences Page Handler"""
+  def get(self):
+    user = None
+    if not self.check_secure_cookie():
+      self.redirect('/blog')
+      return
+    else:
+      user='admin'
+      self.generate('admin-pref.html',{'user':user})
+      
+class UsernameChangeHandler(BaseRequestHandler):
+  """Change Username Page Handler"""
+  def get(self):
+    user = None
+    if not self.check_secure_cookie():
+      self.redirect('/blog')
+      return
+    else:
+      user='admin'
+      self.generate('username-change.html',{'user':user})
     
+  def post(self):
+    user = 'admin'
+    new_username = str(self.request.get('new_username'))
+    password = str(self.request.get('password'))
+
+    user_id_cookie_val = self.request.cookies.get('user_id')
+    u = models.Admin.get_user(user_id_cookie_val)
+
+    if u and secure.valid_pw(u.admin_username, password, u.admin_pw_hash):
+      if secure.valid_pw(u.admin_username, password, u.admin_pw_hash):
+        u.admin_pw_hash = secure.make_pw_hash(new_username,password)
+        u.admin_username = new_username
+        u.put()
+        self.generate('username-change.html',{'error_change_username': 'Username change successful.',
+                                              'user':user
+                                             })
+      else:
+        self.generate('username-change.html', {
+                      'new_username':new_username,
+                      'error_change_username':'Invalid password',
+                      'user':user
+                      })
+    else:
+      self.generate('login.html', {
+                    'error_login':'User does not exist'
+                    })
+      
 class PasswordChangeHandler(BaseRequestHandler):
   """Change Password Page Handler"""
   def get(self):
@@ -203,14 +263,10 @@ class PasswordChangeHandler(BaseRequestHandler):
                     'user':user
                     })
     else:
-      self.remove_secure_cookie('user-id')
       user_id_cookie_val = self.request.cookies.get('user_id')
-      user_id = user_id_cookie_val.split('|')[0]
-      user_key = db.Key.from_path('Admin', int(user_id))
-      user = db.get(user_key)
+      user = models.Admin.get_user(user_id_cookie_val)
       user.admin_pw_hash = secure.make_pw_hash(user.admin_username, password)
       user.put()
-      self.set_secure_cookie('user-id', str(user_id))
       self.generate('pw-change.html',{'error_change_pw': 'Password change successful.',
                                       'user':user
                                       })
@@ -232,7 +288,9 @@ app = webapp2.WSGIApplication([('/blog/?',BlogPostHandler),
                                ('/blog/login', LoginHandler),
                                ('/blog/logout', LogoutHandler),
                                ('/blog/admin',AdminHandler),
+                               ('/blog/admin-pref', AdminPrefHandler),
                                ('/blog/pwchange',PasswordChangeHandler),
+                               ('/blog/userchange',UsernameChangeHandler),
                                ('/blog/(\d+)', PermalinkHandler),
                                ('/blog/tags/(.*)', TagHandler)],
                                 debug=True)

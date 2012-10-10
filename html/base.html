@@ -39,7 +39,7 @@
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<b class="caret"></b></a>
                   <ul class="dropdown-menu">
                     <li><a href="/blog/newpost">New Post</a></li>
-                    <li><a href="/blog/pwchange">Preferences</a></li>
+                    <li><a href="/blog/admin-pref">Preferences</a></li>
 				    <li><a href="/blog/logout">Logout</a></li>
 				  </ul>	
 				</li>
@@ -64,10 +64,6 @@
           <div class="span3">
             <div class="well sidebar-nav">
               <ul class="nav nav-list">
-                <li class="nav-header">Site Menu</li>
-                <li><a href="/blog">Home</a></li>
-                <li><a href="/blog/about">About</a></li>
-                <li><a href="/blog/contact">Contact</a></li>
                 <li class="nav-header">Tags</li>
 				<!--Automatically inserts new tags in the side bar once a tag is created-->
                 {% for item in tag_list %}
