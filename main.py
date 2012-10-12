@@ -1,12 +1,14 @@
 import webapp2
 import os
 import urllib
+import logging
 import jinja2
 import models
 import config
 import secure
 
 from collections import Counter
+from google.appengine.api import memcache
 from google.appengine.ext import db
 
 class BaseRequestHandler(webapp2.RequestHandler):
@@ -41,7 +43,25 @@ class BaseRequestHandler(webapp2.RequestHandler):
       return secure.check_secure_val(user_id_cookie_val)
     except AttributeError:
       return None
-       
+
+def main_page_posts(update=False):
+    key = 'main_page_posts'
+    posts = memcache.get(key)
+    if posts is None or update:
+        logging.error('DB Query: Main Page')
+        posts = db.GqlQuery("SELECT * FROM BlogPost ORDER BY created DESC LIMIT 10")  
+        memcache.set(key, posts)
+    return posts
+    
+def tag_cache(tag_name, update=False):
+    key = 'tag_%s' %tag_name
+    tag = memcache.get(key)
+    if tag is None or update:
+        logging.error('DB Query: Tag')
+        tag = db.GqlQuery("SELECT * FROM BlogPost WHERE tag='%s'" %tag_name) 
+        memcache.set(key, tag)
+    return tag
+      
 class NewPostHandler(BaseRequestHandler):
   """Generages and Handles New Blog Post Entires."""
 
@@ -67,6 +87,8 @@ class NewPostHandler(BaseRequestHandler):
       post_id = str(blog_entry.key().id())
       blog_entry.post_id = post_id
       blog_entry.put()
+      main_page_posts(True)				#rerun query and update the cache.
+      tag_cache(tag, True)
       self.redirect('/blog/%s' %post_id)
       return
     else:
@@ -83,7 +105,7 @@ class BlogPostHandler(BaseRequestHandler):
   """Main Blog Page Handler"""
   def get(self):
     user = None
-    blog_entries = db.GqlQuery("SELECT * FROM BlogPost ORDER BY created DESC LIMIT 10")  
+    blog_entries = main_page_posts()
     if self.check_secure_cookie():
       user = 'admin'
     self.generate('blog.html',{'blog_entries':blog_entries,
@@ -121,7 +143,7 @@ class TagHandler(BaseRequestHandler):
       self.redirect('/blog')
       return
     else:
-      blog_entries = db.GqlQuery("SELECT * FROM BlogPost WHERE tag='%s'" %tag_name) 
+      blog_entries = tag_cache(tag_name)
       self.generate('blog.html',{
                     'blog_entries':blog_entries,
                     'tag_list':self.generate_tag_list(),
