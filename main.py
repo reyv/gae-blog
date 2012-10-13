@@ -19,7 +19,7 @@ class BaseRequestHandler(webapp2.RequestHandler):
     values = {}
     values.update(template_values)  
     path = os.path.join(os.path.dirname(__file__),'html/')
-    jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(path),autoescape=True)
+    jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(path),autoescape=False)
     template = jinja_environment.get_template(template_name)
     self.response.out.write(template.render(template_values))
 
@@ -79,10 +79,11 @@ class NewPostHandler(BaseRequestHandler):
     subject = self.request.get('subject')
     content = self.request.get('content')
     content = content.replace('\n', '<br>')
+    image_url = self.request.get('image_url')
     tag = self.request.get('tag')
     
-    if subject and content and tag:
-      blog_entry = models.BlogPost(subject=subject, content=content, tag=tag, author=config.blog_author)
+    if subject and content and tag and image_url:
+      blog_entry = models.BlogPost(subject=subject, content=content, image_url=image_url, tag=tag, author=config.blog_author)
       blog_entry.put()
       post_id = str(blog_entry.key().id())
       blog_entry.post_id = post_id
@@ -96,6 +97,7 @@ class NewPostHandler(BaseRequestHandler):
 		    'newpost_error':'Subject and content required.',
 		    'subject':subject,
 		    'content':content,
+		    'image_url': image_url,
                     'tag':tag,
                     'tag_list':self.generate_tag_list(),
                     'user':'admin'
