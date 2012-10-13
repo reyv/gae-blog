@@ -12,6 +12,11 @@ body {
 	-moz-box-pack: center;
 }
 
+h3 {
+  display: inline-block;
+  
+}
+
 .big_wrapper{
 	max-width:1000px;
 	min-height: 500px;
@@ -45,28 +50,34 @@ header {
   text-align:center;
 }
 
-/*Blog Post Pages*/
-
-.blog_post{
-  margin-left:10px;
-  
+/*Blog Main Page*/
+.post_image{
+  margin-top: 10px;
 }
 .post_subject{
   font-weight:bold; 
+  display:inline;
 }
 
 .post_created{
+  float: right;
   font-style: italic;
-  margin-bottom: 10px;
+  margin: 10px 6px 0px 0px;
 }
 
 .post_content{
   margin-bottom: 16px;
 }
 
+.tag_container{
+  margin-top: 50px;
+  padding: 2px 2px 2px 2px;
+  background: #E3E3E3;
+  border-radius: 3px; 
+}
+
 .post_tag{
-  margin-top: 16px;
-  font-style: italic;
+  font-weight: bold;
 }
 
 .post_author{
@@ -74,7 +85,7 @@ header {
 }
 
 .post_readmore{
-  margin: 0px 0 6px 10px;
+  margin-bottom: 6px;
   padding: 3px 3px 3px 3px;
   width:75px;
   height:20px;
@@ -82,6 +93,12 @@ header {
   background-color:#EEE;
 }
 
+
+/*Permalink*/
+
+.perma_post_image{
+  margin: 0px 0px 8px 0px;
+}
 /*New Post Areas*/
 textarea{
   font-family: Verdana, Helvetica, sans-serif; 
