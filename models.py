@@ -8,6 +8,7 @@ class BlogPost(db.Model):
   created = db.DateTimeProperty(auto_now_add = True)
   last_modified = db.DateTimeProperty(auto_now = True)
   post_id = db.StringProperty()
+  image_url = db.LinkProperty()
   tag = db.StringProperty(required=True)
   author = db.StringProperty()
 
