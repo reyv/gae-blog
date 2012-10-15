@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block main %}
+    <article>
+      <div class="row-fluid">
+	<div class="span4">
+	  <img class="perma_post_image img-rounded" src="{{image_url}}" width="250" height="350" />
+	</div>
+
+	<div class="span8">
+	  <h3 class="post_subject">{{subject}}</h3>
+	  <div><b>By:</b> {{author}}</div>
+	  <div><b>Date:</b> today </div>
+	  <div><b>Tag:</b> T.B.D.</a></div>
+	</div>
+      </div>
+
+      <div class="post_content">{{content}}</di>
+      <br/>
+      <a href ="/blog/newpost"><input class="btn btn-info" type="submit" name = "Preview" value="Done"></a>
+    </article>	
+{% endblock %}
+
+
