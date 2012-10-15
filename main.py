@@ -1,13 +1,11 @@
 import webapp2
 import os
-import logging
 import jinja2
 import models
 import config
-import secure
+import util
 
 from collections import Counter
-from google.appengine.api import memcache
 from google.appengine.ext import db
 
 
@@ -32,7 +30,7 @@ class BaseRequestHandler(webapp2.RequestHandler):
         return sorted(c.iteritems())  # returns list w/ tuples in alpha. order
 
     def set_secure_cookie(self, name, value):
-        hashed_user = secure.make_secure_val(value)
+        hashed_user = util.make_secure_val(value)
         self.response.headers.add_header('Set-Cookie', '%s=%s; Path=/'
                                             % (name, hashed_user))
 
@@ -42,41 +40,9 @@ class BaseRequestHandler(webapp2.RequestHandler):
     def check_secure_cookie(self):
         try:
             user_id_cookie_val = self.request.cookies.get('user_id')
-            user_id = user_id_cookie_val.split('|')[0]
-            return secure.check_secure_val(user_id_cookie_val)
+            return util.check_secure_val(user_id_cookie_val)
         except AttributeError:
             return None
-
-
-def main_page_posts(update=False):
-    key = 'main_page_posts'
-    posts = memcache.get(key)
-    if posts is None or update:
-        logging.error('DB Query: Main Page')
-        posts = db.GqlQuery("""
-                                SELECT *
-                                FROM BlogPost
-                                ORDER BY created
-                                DESC
-                                LIMIT 10
-                            """)
-        memcache.set(key, posts)
-    return posts
-
-
-def tag_cache(tag_name, update=False):
-    key = 'tag_%s' % tag_name
-    tag = memcache.get(key)
-    if tag is None or update:
-        logging.error('DB Query: Tag')
-        tag = db.GqlQuery("""
-                                SELECT *
-                                FROM BlogPost
-                                WHERE tag='%s'
-                            """
-                            % tag_name)
-        memcache.set(key, tag)
-    return tag
 
 
 class NewPostHandler(BaseRequestHandler):
@@ -109,10 +75,10 @@ class NewPostHandler(BaseRequestHandler):
             post_id = str(blog_entry.key().id())
             blog_entry.post_id = post_id
             blog_entry.put()
-            main_page_posts(True)
+            util.main_page_posts(True)
 
             #rerun query and update the cache.
-            tag_cache(tag, True)
+            util.tag_cache(tag, True)
             self.redirect('/blog/%s' % post_id)
             return
         else:
@@ -131,7 +97,7 @@ class BlogPostHandler(BaseRequestHandler):
     """Main Blog Page Handler"""
     def get(self):
         user = None
-        blog_entries = main_page_posts()
+        blog_entries = util.main_page_posts()
         if self.check_secure_cookie():
             user = 'admin'
         self.generate('blog.html', {'blog_entries': blog_entries,
@@ -173,7 +139,7 @@ class TagHandler(BaseRequestHandler):
             self.redirect('/blog')
             return
         else:
-            blog_entries = tag_cache(tag_name)
+            blog_entries = util.tag_cache(tag_name)
             self.generate('blog.html', {
                             'blog_entries': blog_entries,
                             'tag_list': self.generate_tag_list(),
@@ -196,8 +162,8 @@ class LoginHandler(BaseRequestHandler):
 
         user = models.Admin.login_validation(username)
 
-        if user and secure.valid_pw(username, password, user.admin_pw_hash):
-            if secure.valid_pw(username, password, user.admin_pw_hash):
+        if user and util.valid_pw(username, password, user.admin_pw_hash):
+            if util.valid_pw(username, password, user.admin_pw_hash):
                 self.set_secure_cookie('user_id', str(user.key().id()))
                 self.redirect('/blog/newpost')
                 return
@@ -275,9 +241,9 @@ class UsernameChangeHandler(BaseRequestHandler):
         user_id_cookie_val = self.request.cookies.get('user_id')
         u = models.Admin.get_user(user_id_cookie_val)
 
-        if u and secure.valid_pw(u.admin_username, password, u.admin_pw_hash):
-            if secure.valid_pw(u.admin_username, password, u.admin_pw_hash):
-                u.admin_pw_hash = secure.make_pw_hash(new_username, password)
+        if u and util.valid_pw(u.admin_username, password, u.admin_pw_hash):
+            if util.valid_pw(u.admin_username, password, u.admin_pw_hash):
+                u.admin_pw_hash = util.make_pw_hash(new_username, password)
                 u.admin_username = new_username
                 u.put()
                 self.generate('username-change.html', {
@@ -323,7 +289,7 @@ class PasswordChangeHandler(BaseRequestHandler):
         else:
             user_id_cookie_val = self.request.cookies.get('user_id')
             user = models.Admin.get_user(user_id_cookie_val)
-            user.admin_pw_hash = secure.make_pw_hash(
+            user.admin_pw_hash = util.make_pw_hash(
                                                 user.admin_username, password)
             user.put()
             self.generate('pw-change.html', {
@@ -335,7 +301,7 @@ class PasswordChangeHandler(BaseRequestHandler):
 class AdminHandler(BaseRequestHandler):
     #FOR TESTING PURPOSES ONLY
     def get(self):
-        pw_hash = secure.make_pw_hash(config.admin_username, config.admin_pw)
+        pw_hash = util.make_pw_hash(config.admin_username, config.admin_pw)
         admin = models.Admin(admin_username=config.admin_username,
                                 admin_pw_hash=pw_hash)
         admin.put()
