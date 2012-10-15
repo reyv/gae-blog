@@ -9,3 +9,11 @@ $(document).ready(function (){
     $('.nav-collapse > .nav li:nth-child(3)').addClass('active');
 }});
 
+
+//Image Preview
+$('.image_url').on('change', function (){
+  var url = $(this).val();
+  $('.image_prev').load(url, function (){
+    alert('loaded');
+  });
+});

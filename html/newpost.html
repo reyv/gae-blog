@@ -1,50 +1,28 @@
 {% extends "base.html" %}
 {% block main %}   
   <form method="post">
-  
-  <div class="control-group">
-    <label class="control-label" for="inputText">Blog Post Title</label>
-    <div class="controls">
-      <input class="input-xlarge" type="text" name="subject" value="{{subject}}" placeholder="Blog Post Title" required />
-    </div>
-  </div>
-  
-  <div class="control-group">
-    <label class="control-label" for="inputText">Blog Post Content</label>
-    <div class="controls">
-      <textarea class="input-xxlarge" name="content" rows="15" placeholder = "Blog Post Title" required>{{content | safe}}</textarea>
-    </div>
-  </div>
+    <label for="inputText">Blog Post Title</label>
+    <input class="input-xlarge" type="text" name="subject" value="{{subject}}" placeholder="Blog Post Title" required />
+ 
+    <label for="inputText">Blog Post Content</label>
+    <textarea class="input-xxlarge" name="content" rows="15" placeholder = "Blog Post Title" required>{{content}}</textarea>
 
-  <div class="control-group">
-    <label class="control-label" for="inputText">Image URL</label>
-    <div class="controls">
-      <input class="input-xlarge" type="text" name="image_url" placeholder="Image URL" required />
+    <div class="row-fluid">
+      <div class="span2">
+	<label for="inputText">Image URL</label>
+	<input class="image_url input-xlarge" type="text" name="image_url" placeholder="Image URL" required />
+	<label for="inputText">Tag</label>
+	<input class="input-xlarge" type="text" name="tag" value="{{tag}}" placeholder="Tag" required />
+	
+	<input class="btn btn-info" type="submit" value="Submit Entry!">
+	<div class="error">{{newpost_error}}</div>
+      </div>
+      <div class="span7">
+	<div class="image_prev">
+	  
+	</div>
+      </div>
     </div>
-  </div>
-
-  <div class="control-group">
-    <label class="control-label" for="inputText">Tag</label>
-    <div class="controls">
-      <input class="input-xlarge" type="text" name="tag" value="{{tag}}" placeholder="Tag" required />
-    </div>
-  </div>
-  
-  <br>
-  
-  <div class="control-group">
-    <label class="control-label"></label>
-    <div class="controls">
-      <input class="btn btn-info" type="submit" value="Submit Entry!">
-    </div>
-  </div>
-    
-  <div class="control-group">
-    <label class="control-label"></label>
-    <div class="controls">
-      <div class="error">{{newpost_error}}</div>
-    </div>
-  </div>
-  
+    <br>
   </form>
 {% endblock %}

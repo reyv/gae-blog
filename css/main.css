@@ -110,6 +110,14 @@ textarea{
   color:red;
 }
 
+.image_prev{
+  float: right;
+  margin-top: 10px;
+  width:200px;
+  height:200px;
+  border: 1px solid red;
+}
+
 /*Footer*/
 footer{
   text-align:center;
