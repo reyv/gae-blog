@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% block main %}   
+{% block main %}
   <form method="post">
     <label for="inputText">Blog Post Title</label>
     <input class="input-xlarge" type="text" name="subject" value="{{subject}}" placeholder="Blog Post Title" required />
- 
+
     <label for="inputText">Blog Post Content</label>
     <textarea class="input-xxlarge" name="content" rows="15" placeholder = "Blog Post Title" required>{{content}}</textarea>
 
@@ -18,9 +18,7 @@
 	<div class="error">{{newpost_error}}</div>
       </div>
       <div class="span7">
-	<div class="image_prev">
-	  
-	</div>
+	<div class="image_prev"></div>
       </div>
     </div>
     <br>
