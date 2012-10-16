@@ -9,9 +9,13 @@ blog_author = 'Author A'
 admin_username = 'admin'
 admin_pw = 'password'
 
-
 #Admin salt
 salt_length = 5
 
 #Cookie
 cookie_secret = 'this is my secret key'
+
+#Social Media
+google_plus_url = 'https://plus.google.com/URL'
+twitter_url = 'http://www.twitter.com/URL'
+linkedin_url = 'http://www.linkedin.com/company/URL'

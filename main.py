@@ -14,14 +14,19 @@ class BaseRequestHandler(webapp2.RequestHandler):
     generate() augments the template variables."""
 
     def generate(self, template_name, template_values={}):
-        values = {}
+        values = {'blog_name': config.blog_name,
+                    'twitter_url': config.twitter_url,
+                    'google_plus_url': config.google_plus_url,
+                    'linkedin_url': config.linkedin_url,
+                    'tag_list': self.generate_tag_list()
+                    }
         values.update(template_values)
         path = os.path.join(os.path.dirname(__file__), 'html/')
         jinja_environment = jinja2.Environment(
                                 loader=jinja2.FileSystemLoader(path),
                                 autoescape=False)
         template = jinja_environment.get_template(template_name)
-        self.response.out.write(template.render(template_values))
+        self.response.out.write(template.render(values))
 
     def generate_tag_list(self):
         tag_entries = db.GqlQuery("SELECT tag FROM BlogPost")
@@ -51,7 +56,6 @@ class NewPostHandler(BaseRequestHandler):
     def get(self):
         if self.check_secure_cookie():
             self.generate('newpost.html', {
-                            'tag_list': self.generate_tag_list(),
                             'user': 'admin'
                          })
         else:
@@ -101,7 +105,6 @@ class NewPostHandler(BaseRequestHandler):
                             'content': content,
                             'image_url': image_url,
                             'tag': tag,
-                            'tag_list': self.generate_tag_list(),
                             'user': user
                                 })
 
@@ -120,7 +123,6 @@ class PreviewHandler(BaseRequestHandler):
         else:
             self.generate('preview.html', {
                                         'preview': blog_post,
-                                        'tag_list': self.generate_tag_list(),
                                         'user': user
                                          })
 
@@ -133,7 +135,6 @@ class BlogPostHandler(BaseRequestHandler):
         if self.check_secure_cookie():
             user = 'admin'
         self.generate('blog.html', {'blog_entries': blog_entries,
-                        'tag_list': self.generate_tag_list(),
                         'user': user
                         })
 
@@ -155,7 +156,6 @@ class PermalinkHandler(BaseRequestHandler):
             self.generate('blogpost.html', {
                             'blog_post': blog_post,
                             'post_id': post_id,
-                            'tag_list': self.generate_tag_list(),
                             'user': user
                             })
 
@@ -174,7 +174,6 @@ class TagHandler(BaseRequestHandler):
             blog_entries = util.tag_cache(tag_name)
             self.generate('blog.html', {
                             'blog_entries': blog_entries,
-                            'tag_list': self.generate_tag_list(),
                             'user': user
                             })
 
@@ -225,7 +224,6 @@ class AboutHandler(BaseRequestHandler):
         if self.check_secure_cookie():
             user = 'admin'
         self.generate('about.html', {
-                        'tag_list': self.generate_tag_list(),
                         'user': user
                          })
 
@@ -237,7 +235,6 @@ class ContactHandler(BaseRequestHandler):
         if self.check_secure_cookie():
             user = 'admin'
         self.generate('contact.html', {
-                        'tag_list': self.generate_tag_list(),
                         'user': user
                         })
 
@@ -253,7 +250,6 @@ class AdminPrefHandler(BaseRequestHandler):
             user = 'admin'
             self.generate('admin-pref.html', {
                                         'user': user,
-                                        'tag_list': self.generate_tag_list()
                                             })
 
 
