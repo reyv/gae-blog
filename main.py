@@ -96,7 +96,7 @@ class NewPostHandler(BaseRequestHandler):
                 return
         else:
             self.generate('newpost.html', {
-                            'newpost_error': 'Subject & content required.',
+                            'newpost_error': 'All fields  are required!',
                             'subject': subject,
                             'content': content,
                             'image_url': image_url,

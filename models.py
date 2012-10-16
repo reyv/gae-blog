@@ -9,19 +9,14 @@ class BlogPost(db.Model):
     created = db.DateTimeProperty(auto_now_add=True)
     last_modified = db.DateTimeProperty(auto_now=True)
     post_id = db.StringProperty()
-    image_url = db.LinkProperty()
+    image_url = db.StringProperty()
     tag = db.StringProperty(required=True)
     author = db.StringProperty()
 
 
-class PostPreview(db.Model):
+class PostPreview(BlogPost):
     """Model class for blog post previews"""
-    subject = db.StringProperty(required=True)
-    content = db.TextProperty(required=True)
-    created = db.DateTimeProperty(auto_now_add=True)
-    image_url = db.LinkProperty()
-    tag = db.StringProperty(required=True)
-    author = db.StringProperty()
+    pass
 
 
 class Admin(db.Model):

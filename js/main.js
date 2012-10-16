@@ -1,3 +1,4 @@
+//Main Page
 $(document).ready(function (){
   var text = $('.page').text();
 
@@ -9,7 +10,7 @@ $(document).ready(function (){
     $('.nav-collapse > .nav li:nth-child(3)').addClass('active');
 }});
 
-
+//Back button for Blog Post Preview Page
 $(document).ready(function(){
     $('#preview-back').on('click', function(){
         parent.history.back();
