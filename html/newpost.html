@@ -8,19 +8,16 @@
     <textarea class="input-xxlarge" name="content" rows="15" placeholder = "Blog Post Title" required>{{content}}</textarea>
 
     <div class="row-fluid">
-      <div class="span2">
 	<label for="inputText">Image URL</label>
 	<input class="image_url input-xlarge" type="text" name="image_url" placeholder="Image URL" required />
 	<label for="inputText">Tag</label>
 	<input class="input-xlarge" type="text" name="tag" value="{{tag}}" placeholder="Tag" required />
-	
-	<input class="btn btn-info" type="submit" value="Submit Entry!">
 	<div class="error">{{newpost_error}}</div>
-      </div>
-      <div class="span7">
-	<div class="image_prev"></div>
-      </div>
     </div>
+
+    <input class="btn btn-info" type="submit" name="Submit Entry" value="Submit Entry">
+    <input class="btn btn-info" type="submit" name="Preview" value="Preview" >
     <br>
+
   </form>
 {% endblock %}

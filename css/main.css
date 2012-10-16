@@ -14,7 +14,11 @@ body {
 
 h3 {
   display: inline-block;
-  
+
+}
+
+textarea{
+  font-family: Verdana, Helvetica, sans-serif;
 }
 
 .big_wrapper{
@@ -42,6 +46,13 @@ h3 {
   text-align:center;
 }
 
+.error{
+  font-weight:bold;
+  font-family: Verdana, Helvetica, sans-serif;
+  color:red;
+}
+
+
 /*Header*/
 header {
   margin-top:25px;
@@ -55,7 +66,7 @@ header {
   margin-top: 10px;
 }
 .post_subject{
-  font-weight:bold; 
+  font-weight:bold;
   display:inline;
 }
 
@@ -70,10 +81,10 @@ header {
 }
 
 .tag_container{
-  margin-top: 50px;
+  margin-top: 30px;
   padding: 2px 2px 2px 2px;
   background: #E3E3E3;
-  border-radius: 3px; 
+  border-radius: 3px;
 }
 
 .post_tag{
@@ -100,15 +111,6 @@ header {
   margin: 0px 0px 8px 0px;
 }
 /*New Post Areas*/
-textarea{
-  font-family: Verdana, Helvetica, sans-serif; 
-}
-
-.error{
-  font-weight:bold; 
-  font-family: Verdana, Helvetica, sans-serif; 
-  color:red;
-}
 
 .image_prev{
   float: right;
@@ -118,6 +120,15 @@ textarea{
   border: 1px solid red;
 }
 
+/*Preview Page*/
+.preview_warning{
+  text-align: center;
+  font-weight:bold;
+  font-family: Verdana, Helvetica, sans-serif;
+  color:#08C;
+  border: 1px solid #08C;
+}
+
 /*Footer*/
 footer{
   text-align:center;
@@ -125,7 +136,7 @@ footer{
 
 /*Social*/
 .main_social{
-	padding: 4px;
-	display: inline-block;
-	float: right;
+  padding: 4px;
+  display: inline-block;
+  float: right;
 }

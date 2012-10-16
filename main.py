@@ -59,38 +59,70 @@ class NewPostHandler(BaseRequestHandler):
             return
 
     def post(self):
+        user = None
         subject = self.request.get('subject')
         content = self.request.get('content')
         content = content.replace('\n', '<br>')
         image_url = self.request.get('image_url')
         tag = self.request.get('tag')
+        preview = self.request.POST.get('Preview', None)
 
         if subject and content and tag and image_url:
-            blog_entry = models.BlogPost(subject=subject,
-                                            content=content,
-                                            image_url=image_url,
-                                            tag=tag,
-                                            author=config.blog_author)
-            blog_entry.put()
-            post_id = str(blog_entry.key().id())
-            blog_entry.post_id = post_id
-            blog_entry.put()
-            util.main_page_posts(True)
+            if preview:
+                preview = models.PostPreview(subject=subject,
+                                                content=content,
+                                                image_url=image_url,
+                                                tag=tag,
+                                                author=config.blog_author,
+                                                key_name='preview')
+                preview.put()
+                self.redirect('/blog/newpost/preview')
+                return
+            else:
+                blog_entry = models.BlogPost(subject=subject,
+                                                content=content,
+                                                image_url=image_url,
+                                                tag=tag,
+                                                author=config.blog_author)
+                blog_entry.put()
+                post_id = str(blog_entry.key().id())
+                blog_entry.post_id = post_id
+                blog_entry.put()
+                util.main_page_posts(True)
 
-            #rerun query and update the cache.
-            util.tag_cache(tag, True)
-            self.redirect('/blog/%s' % post_id)
-            return
+                #rerun query and update the cache.
+                util.tag_cache(tag, True)
+                self.redirect('/blog/%s' % post_id)
+                return
         else:
             self.generate('newpost.html', {
-                            'newpost_error': 'Subject and content required.',
+                            'newpost_error': 'Subject & content required.',
                             'subject': subject,
                             'content': content,
                             'image_url': image_url,
                             'tag': tag,
                             'tag_list': self.generate_tag_list(),
-                            'user': 'admin'
-                            })
+                            'user': user
+                                })
+
+
+class PreviewHandler(BaseRequestHandler):
+    """Blog Post Preview Handler"""
+    def get(self):
+        user = None
+        post_key = db.Key.from_path('PostPreview', 'preview')
+        blog_post = models.PostPreview.get(post_key)
+
+        if self.check_secure_cookie():
+            user = 'admin'
+        if not blog_post:
+            self.generate('404.html', {})
+        else:
+            self.generate('preview.html', {
+                                        'preview': blog_post,
+                                        'tag_list': self.generate_tag_list(),
+                                        'user': user
+                                         })
 
 
 class BlogPostHandler(BaseRequestHandler):
@@ -219,7 +251,10 @@ class AdminPrefHandler(BaseRequestHandler):
             return
         else:
             user = 'admin'
-            self.generate('admin-pref.html', {'user': user})
+            self.generate('admin-pref.html', {
+                                        'user': user,
+                                        'tag_list': self.generate_tag_list()
+                                            })
 
 
 class UsernameChangeHandler(BaseRequestHandler):
@@ -310,6 +345,7 @@ class AdminHandler(BaseRequestHandler):
 
 app = webapp2.WSGIApplication([('/blog/?', BlogPostHandler),
                                ('/blog/newpost', NewPostHandler),
+                               ('/blog/newpost/preview', PreviewHandler),
                                ('/blog/about', AboutHandler),
                                ('/blog/contact', ContactHandler),
                                ('/blog/login', LoginHandler),

@@ -1,12 +1,13 @@
 {% extends "base.html" %}
-{% block main %}  
+{% block main %}
     <article>
       <div class="row-fluid">
 	<div class="span4">
 	  <img class="perma_post_image img-rounded" src="{{blog_post.image_url}}" width="250" height="350" />
 	</div>
-
+	
 	<div class="span8">
+            <h3 class="post_subject">{{blog_post.subject}}</h3>
 	  <div><b>By:</b> {{blog_post.author}}</div>
 	  <div><b>Date:</b> {{blog_post.created.strftime("%b %d,%Y")}}</div>
 	  <div><b>Tag:</b> <a href="/blog/tags/{{blog_post.tag}}">{{blog_post.tag}}</a></div>

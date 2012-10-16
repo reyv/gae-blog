@@ -8,3 +8,11 @@ $(document).ready(function (){
   }else if(text=='contact'){
     $('.nav-collapse > .nav li:nth-child(3)').addClass('active');
 }});
+
+
+$(document).ready(function(){
+    $('#preview-back').on('click', function(){
+        parent.history.back();
+        return false;
+    });
+});
