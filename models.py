@@ -14,6 +14,16 @@ class BlogPost(db.Model):
     author = db.StringProperty()
 
 
+class PostPreview(db.Model):
+    """Model class for blog post previews"""
+    subject = db.StringProperty(required=True)
+    content = db.TextProperty(required=True)
+    created = db.DateTimeProperty(auto_now_add=True)
+    image_url = db.LinkProperty()
+    tag = db.StringProperty(required=True)
+    author = db.StringProperty()
+
+
 class Admin(db.Model):
     """Model class for Admin login"""
     admin_username = db.StringProperty(required=True,
