@@ -5,6 +5,7 @@ import random
 import logging
 
 from string import letters
+from collections import Counter
 from google.appengine.api import memcache
 from google.appengine.ext import db
 
@@ -57,13 +58,10 @@ def main_page_posts(update=False):
     posts = memcache.get(key)
     if posts is None or update:
         logging.error('DB Query: Main Page')
-        posts = db.GqlQuery("""
-                                SELECT *
-                                FROM BlogPost
-                                ORDER BY created
-                                DESC
-                                LIMIT 10
-                            """)
+        posts = db.GqlQuery("""SELECT *
+                            FROM BlogPost
+                            ORDER BY created DESC LIMIT 10"""
+                            )
         memcache.set(key, posts)
     return posts
 
@@ -73,11 +71,18 @@ def tag_cache(tag_name, update=False):
     tag = memcache.get(key)
     if tag is None or update:
         logging.error('DB Query: Tag')
-        tag = db.GqlQuery("""
-                                SELECT *
-                                FROM BlogPost
-                                WHERE tag='%s'
-                            """
-                            % tag_name)
+        tag = db.GqlQuery("""SELECT * FROM BlogPost
+                          WHERE tag = :1""", tag_name
+                         )
         memcache.set(key, tag)
     return tag
+
+
+#Misc. Functions
+
+
+def generate_tag_list():
+    tag_entries = db.GqlQuery("SELECT tag FROM BlogPost")
+    tags_all = [str(item.tag) for item in tag_entries]  # excecute query
+    c = Counter(tags_all)    # provides dict with count of each tag
+    return sorted(c.iteritems())  # returns list w/ tuples in alpha. order

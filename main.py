@@ -5,8 +5,9 @@ import models
 import config
 import util
 
-from collections import Counter
 from google.appengine.ext import db
+
+#q = db.GqlQuery("SELECT * FROM BlogPost WHERE created=DATE('2012-10-17')")
 
 
 class BaseRequestHandler(webapp2.RequestHandler):
@@ -18,7 +19,7 @@ class BaseRequestHandler(webapp2.RequestHandler):
                     'twitter_url': config.twitter_url,
                     'google_plus_url': config.google_plus_url,
                     'linkedin_url': config.linkedin_url,
-                    'tag_list': self.generate_tag_list()
+                    'tag_list': util.generate_tag_list()
                     }
         values.update(template_values)
         path = os.path.join(os.path.dirname(__file__), 'html/')
@@ -27,12 +28,6 @@ class BaseRequestHandler(webapp2.RequestHandler):
                                 autoescape=False)
         template = jinja_environment.get_template(template_name)
         self.response.out.write(template.render(values))
-
-    def generate_tag_list(self):
-        tag_entries = db.GqlQuery("SELECT tag FROM BlogPost")
-        tags_all = [str(item.tag) for item in tag_entries]  # excecute query
-        c = Counter(tags_all)    # provides dict with count of each tag
-        return sorted(c.iteritems())  # returns list w/ tuples in alpha. order
 
     def set_secure_cookie(self, name, value):
         hashed_user = util.make_secure_val(value)
@@ -163,7 +158,7 @@ class PermalinkHandler(BaseRequestHandler):
 class TagHandler(BaseRequestHandler):
     """Tag Page Handler"""
     def get(self, tag_name):
-        tag_list = dict(self.generate_tag_list())
+        tag_list = dict(util.generate_tag_list())
         user = None
         if self.check_secure_cookie():
             user = 'admin'
@@ -248,9 +243,7 @@ class AdminPrefHandler(BaseRequestHandler):
             return
         else:
             user = 'admin'
-            self.generate('admin-pref.html', {
-                                        'user': user,
-                                            })
+            self.generate('admin-pref.html', {'user': user})
 
 
 class UsernameChangeHandler(BaseRequestHandler):
