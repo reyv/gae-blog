@@ -1,13 +1,16 @@
+import re
 import hashlib
 import hmac
-import config
 import random
 import logging
+import config
+import models
 
 from string import letters
 from collections import Counter
 from google.appengine.api import memcache
 from google.appengine.ext import db
+from google.appengine.api import mail
 
 
 #Hasning functions - cookies
@@ -115,3 +118,22 @@ def generate_archive_list():
 
     c = Counter(archive_years)    # provides dict with count of each year
     return sorted(c.iteritems())  # returns list w/ ordered tuples
+
+
+#Contact for functions
+
+
+def send_mail(email, email_subject, email_message):
+    """Send mail function"""
+    match = re.match(r'\w+\.?\w+@\w+\.\w{2,3}', email)
+    if match:
+        message = mail.EmailMessage(sender=config.email_from,
+                                        subject=email_subject)
+        message.to = config.email_to
+        message.html = email_message + '<br /><br /> The sender is ' + email
+        message.send()
+        e = models.SubscribeEmail(email=email)
+        e.put()
+        return 'Thank you for contacting us.'
+    else:
+        return 'You have input an invalid entry. Please retry.'
