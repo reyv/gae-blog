@@ -1,9 +1,5 @@
-*.py~
+*.*~
 *.pyc
 *.xml
-*.js~
-*.css~
-*.html~
-*.yaml~
 *.db
 *.nja
