@@ -253,6 +253,16 @@ class ContactHandler(BaseRequestHandler):
                         'user': user
                         })
 
+    def post(self):
+        email_user = self.request.get('email_from')
+        email_subject = self.request.get('email_subject')
+        email_message = self.request.get('email_message')
+        message = util.send_mail(email_user, email_subject, email_message)
+        self.generate('contact.html', {
+                                        'message': message,
+                                        'user': 'admin'
+                                    })
+
 
 class AdminPrefHandler(BaseRequestHandler):
     """Admin Preferences Page Handler"""

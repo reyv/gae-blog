@@ -19,3 +19,8 @@ cookie_secret = 'this is my secret key'
 google_plus_url = 'https://plus.google.com/URL'
 twitter_url = 'http://www.twitter.com/URL'
 linkedin_url = 'http://www.linkedin.com/company/URL'
+
+#Contact for e-mails
+
+email_to = 'test@test.com'
+email_from = 'test@test.com'

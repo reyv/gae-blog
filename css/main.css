@@ -52,6 +52,13 @@ textarea{
   color:red;
 }
 
+.message{
+  text-align: center;
+  font-weight:bold;
+  font-family: Verdana, Helvetica, sans-serif;
+  color:#08C;
+}
+
 
 /*Header*/
 header {

@@ -1,7 +1,21 @@
 {% extends "base.html" %}
-
   {% block main %}
   <span class="page">contact</span>	
-  {% endblock %}
-  
-  
+
+  <h3>Questions, Comments, or Concerns? Please let us know!</3>
+  <label class="message">{{message}}</label>
+
+  <form method="post">
+    <label for="inputText">From (E-mail Address)</label>
+    <input class="input-xlarge" type="text" name="email_from" placeholder="E-mail Address..." required />
+
+    <label for="inputText">Subject</label>
+    <input class="input-xlarge" type="text" name="email_subject" placeholder="Subject..." required />
+
+    <label for="inputText">Comment</label>
+    <textarea class="input-xxlarge" name="email_message" rows="15" placeholder ="Comment..." required></textarea>
+
+    <div><input class="btn btn-info" type="submit" name="send" value="Send.."></div>
+    <br>
+  </form>
+    {% endblock %}
