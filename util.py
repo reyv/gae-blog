@@ -71,11 +71,28 @@ def tag_cache(tag_name, update=False):
     tag = memcache.get(key)
     if tag is None or update:
         logging.error('DB Query: Tag')
-        tag = db.GqlQuery("""SELECT * FROM BlogPost
-                          WHERE tag = :1""", tag_name
+        tag = db.GqlQuery(""" SELECT * FROM BlogPost
+                              WHERE tag = :1""", tag_name
                          )
         memcache.set(key, tag)
     return tag
+
+
+def archive_cache(archive_year, update=False):
+    previous_year = int(archive_year) + 1
+    first_year = 'DATE(' + archive_year + '-1-1'
+    second_year = 'DATE(' + str(previous_year) + '-1-1'
+
+    key = 'archive_%s' % archive_year
+    year = memcache.get(key)
+    if year is None or update:
+        logging.error('DB Query: Archive')
+        year = db.GqlQuery("""  SELECT * FROM BlogPost
+                                WHERE created >= :1
+                                AND created < :2 """, first_year, second_year
+                            )
+        memcache.set(key, year)
+    return year
 
 
 #Misc. Functions
@@ -86,3 +103,15 @@ def generate_tag_list():
     tags_all = [str(item.tag) for item in tag_entries]  # excecute query
     c = Counter(tags_all)    # provides dict with count of each tag
     return sorted(c.iteritems())  # returns list w/ tuples in alpha. order
+
+
+def generate_archive_list():
+    archive = db.GqlQuery("""   SELECT *
+                                FROM BlogPost
+                                WHERE created>DATE('2010-1-1')
+                            """)
+    # excecute query
+    archive_years = [str(item.created.strftime('%Y')) for item in archive]
+
+    c = Counter(archive_years)    # provides dict with count of each year
+    return sorted(c.iteritems())  # returns list w/ ordered tuples

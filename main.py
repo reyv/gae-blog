@@ -7,8 +7,6 @@ import util
 
 from google.appengine.ext import db
 
-#q = db.GqlQuery("SELECT * FROM BlogPost WHERE created=DATE('2012-10-17')")
-
 
 class BaseRequestHandler(webapp2.RequestHandler):
     """Supplies a common template generation function.
@@ -19,7 +17,8 @@ class BaseRequestHandler(webapp2.RequestHandler):
                     'twitter_url': config.twitter_url,
                     'google_plus_url': config.google_plus_url,
                     'linkedin_url': config.linkedin_url,
-                    'tag_list': util.generate_tag_list()
+                    'tag_list': util.generate_tag_list(),
+                    'archive_list': util.generate_archive_list()
                     }
         values.update(template_values)
         path = os.path.join(os.path.dirname(__file__), 'html/')
@@ -87,10 +86,12 @@ class NewPostHandler(BaseRequestHandler):
                 post_id = str(blog_entry.key().id())
                 blog_entry.post_id = post_id
                 blog_entry.put()
-                util.main_page_posts(True)
 
                 #rerun query and update the cache.
+                util.main_page_posts(True)
                 util.tag_cache(tag, True)
+                archive_year = blog_entry.created.strftime('%Y')
+                util.archive_cache(archive_year, True)
                 self.redirect('/blog/%s' % post_id)
                 return
         else:
@@ -167,6 +168,25 @@ class TagHandler(BaseRequestHandler):
             return
         else:
             blog_entries = util.tag_cache(tag_name)
+            self.generate('blog.html', {
+                            'blog_entries': blog_entries,
+                            'user': user
+                            })
+
+
+class ArchiveHandler(BaseRequestHandler):
+    """Archive Page Handler"""
+    def get(self, archive_year):
+        #previous_year = int(archive_year) + 1
+        archive_list = dict(util.generate_archive_list())
+        user = None
+        if self.check_secure_cookie():
+            user = 'admin'
+        if archive_year not in archive_list.keys():
+            self.redirect('/blog')
+            return
+        else:
+            blog_entries = util.archive_cache(archive_year)
             self.generate('blog.html', {
                             'blog_entries': blog_entries,
                             'user': user
@@ -344,5 +364,6 @@ app = webapp2.WSGIApplication([('/blog/?', BlogPostHandler),
                                ('/blog/pwchange', PasswordChangeHandler),
                                ('/blog/userchange', UsernameChangeHandler),
                                ('/blog/(\d+)', PermalinkHandler),
-                               ('/blog/tags/(.*)', TagHandler)],
+                               ('/blog/tags/(.*)', TagHandler),
+                               ('/blog/archive/(\d{4})', ArchiveHandler)],
                                 debug=True)
