@@ -24,7 +24,7 @@ class BaseRequestHandler(webapp2.RequestHandler):
         path = os.path.join(os.path.dirname(__file__), 'html/')
         jinja_environment = jinja2.Environment(
                                 loader=jinja2.FileSystemLoader(path),
-                                autoescape=False)
+                                    autoescape=False)
         template = jinja_environment.get_template(template_name)
         self.response.out.write(template.render(values))
 
@@ -147,7 +147,7 @@ class PermalinkHandler(BaseRequestHandler):
         if self.check_secure_cookie():
             user = 'admin'
         if not blog_post:
-            self.generate('404.html', {})
+            self.generate('error.html', {})
         else:
             self.generate('blogpost.html', {
                             'blog_post': blog_post,
@@ -377,3 +377,7 @@ app = webapp2.WSGIApplication([('/blog/?', BlogPostHandler),
                                ('/blog/tags/(.*)', TagHandler),
                                ('/blog/archive/(\d{4})', ArchiveHandler)],
                                 debug=True)
+
+app.error_handlers[404] = util.handle_error
+if not app.debug:
+    app.error_handlers[500] = util.handle_error
