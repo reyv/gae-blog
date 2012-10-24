@@ -25,11 +25,11 @@ Instructions
 
 Once the app has been uploaded to your App Engine Account, do the following steps:
 
-1) Visit http://www.YOURDOMAINNAME.com/blog/admin to create an initial admin account.
-2) The default username and password in the config.py file is 'admin' and 'password', respectively.
-3) Visit the login section of the page and type in the default username and password.
-4) Visit the change username and change password sections of the site to create a unique username
+- Visit http://www.YOURDOMAINNAME.com/blog/admin to create an initial admin account.
+- The default username and password in the config.py file is 'admin' and 'password', respectively.
+- Visit the login section of the page and type in the default username and password.
+- Visit the change username and change password sections of the site to create a unique username
    and a more secure password.
-5) Once this is complete, open the main.py file and delete the AdminHandler class towards the bottom.
-6) Delete '('/blog/admin', AdminHandler),' from the url routing list towards the bottom of the file.
-7) You are ready to use the blog.
+- Once this is complete, open the main.py file and delete the AdminHandler class towards the bottom.
+- Delete '('/blog/admin', AdminHandler),' from the url routing list towards the bottom of the file.
+- You are ready to use the blog.
