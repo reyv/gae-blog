@@ -1,3 +1,5 @@
+import os
+import jinja2
 import re
 import hashlib
 import hmac
@@ -137,3 +139,22 @@ def send_mail(email, email_subject, email_message):
         return 'Thank you for contacting us.'
     else:
         return 'You have input an invalid entry. Please retry.'
+
+# URL Exception Handling
+
+
+def generate(template_name, **kwargs):
+    path = os.path.join(os.path.dirname(__file__), 'html/')
+    jinja_environment = jinja2.Environment(
+                        loader=jinja2.FileSystemLoader(path),
+                            autoescape=False)
+    template = jinja_environment.get_template(template_name)
+    return template.render(**kwargs)
+
+
+def handle_error(request, response, exception):
+    status_code = exception.status_int or 500
+    logging.exception(exception)
+    var = {'status_code': status_code}
+    response.write(generate('error.html', **var))
+    response.set_status(status_code)
