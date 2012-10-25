@@ -14,20 +14,20 @@ handlers:
   static_files: favicon.ico
   upload: favicon\.ico
   
-- url: /css
-  static_dir: css
+- url: /static/css
+  static_dir: static/css
   expiration: "7d"
 
-- url: /js
-  static_dir: js
+- url: /static/js
+  static_dir: static/js
   expiration: "7d"
 
-- url: /img
-  static_dir: img
+- url: /static/img
+  static_dir: static/img
   expiration: "7d"
   
 - url: .*
-  script: main.app
+  script: blog.app
   
 libraries:
 - name: jinja2

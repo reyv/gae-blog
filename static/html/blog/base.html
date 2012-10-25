@@ -6,14 +6,14 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>My Blog</title>
+    <title>{{blog_name}}</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
 
-    <link rel="stylesheet" href="/css/bootstrap.css">
-    <link rel="stylesheet" href="/css/bootstrap-responsive.min.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <script src="/js/vendor/modernizr-2.6.1-respond-1.1.0.min.js"></script>
+    <link rel="stylesheet" href="/static/css/vendor/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/vendor/bootstrap-responsive.min.css">
+    <link rel="stylesheet" href="/static/css/blog.css">
+    <script src="/static/js/vendor/modernizr-2.6.1-respond-1.1.0.min.js"></script>
   </head>
   <body>
     <!--[if lt IE 7]>
@@ -47,9 +47,9 @@
 				  <li><a href="/blog/login">Login</a></li>
 				{% endif %}
               </ul>
-	          <a class="main_social" href="{{twitter_url}}" target="_blank"><img src="/img/main_social/twitter.png"></a>
-		      <a class="main_social" href="{{linkedin_url}}" target="_blank"><img src="/img/main_social/linked-in.png"></a>
-		      <a class="main_social" href="{{google_plus_url}}" target="_blank"><img src="/img/main_social/g_plus.png"></a>
+	          <a class="main_social" href="{{twitter_url}}" target="_blank"><img src="/static/img/main_social/twitter.png"></a>
+		      <a class="main_social" href="{{linkedin_url}}" target="_blank"><img src="/static/img/main_social/linked-in.png"></a>
+		      <a class="main_social" href="{{google_plus_url}}" target="_blank"><img src="/static/img/main_social/g_plus.png"></a>
             </div><!--/.nav-collapse -->
           </div>
         </div>
@@ -71,7 +71,7 @@
 	           {% endfor %}
 	       <li class="nav-header">Archive</li>
 
-				<!--Automatically inserts new tags in the side bar once a tag is created-->
+				<!--Automatically inserts new archive years in the side bar once a tag is created-->
                     {% for item in archive_list %}
 	              <li><a href="/blog/archive/{{item[0]}}">{{item[0]}} ({{item[1]}})</a></li>
 	           {% endfor %}
@@ -98,10 +98,10 @@
 
     </div><!--/.fluid-container-->
 	
-	  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
       <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.8.1.min.js"><\/script>')</script>
-      <script src="/js/vendor/bootstrap.min.js"></script>
-      <script src="/js/main.js"></script>
+      <script src="/static/js/vendor/bootstrap.min.js"></script>
+      <script src="/static/js/main.js"></script>
 	  <!-- <script>
           var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
           function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];

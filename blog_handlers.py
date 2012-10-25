@@ -21,7 +21,7 @@ class BaseRequestHandler(webapp2.RequestHandler):
                     'archive_list': util.generate_archive_list()
                     }
         values.update(template_values)
-        path = os.path.join(os.path.dirname(__file__), 'html/')
+        path = os.path.join(os.path.dirname(__file__), 'static/html/blog/')
         jinja_environment = jinja2.Environment(
                                 loader=jinja2.FileSystemLoader(path),
                                     autoescape=False)
@@ -115,7 +115,7 @@ class PreviewHandler(BaseRequestHandler):
         if self.check_secure_cookie():
             user = 'admin'
         if not blog_post:
-            self.generate('404.html', {})
+            self.generate('error.html', {})
         else:
             self.generate('preview.html', {
                                         'preview': blog_post,
@@ -177,7 +177,6 @@ class TagHandler(BaseRequestHandler):
 class ArchiveHandler(BaseRequestHandler):
     """Archive Page Handler"""
     def get(self, archive_year):
-        #previous_year = int(archive_year) + 1
         archive_list = dict(util.generate_archive_list())
         user = None
         if self.check_secure_cookie():
@@ -347,9 +346,9 @@ class PasswordChangeHandler(BaseRequestHandler):
                                                 user.admin_username, password)
             user.put()
             self.generate('pw-change.html', {
-                                        'error_change_pw': 'Password changed.',
-                                        'user': user
-                                      })
+                                'error_change_pw': 'Password changed.',
+                                'user': user
+                                })
 
 
 class AdminHandler(BaseRequestHandler):
@@ -361,23 +360,3 @@ class AdminHandler(BaseRequestHandler):
         admin.put()
         self.redirect('/blog')
         return
-
-app = webapp2.WSGIApplication([('/blog/?', BlogPostHandler),
-                               ('/blog/newpost', NewPostHandler),
-                               ('/blog/newpost/preview', PreviewHandler),
-                               ('/blog/about', AboutHandler),
-                               ('/blog/contact', ContactHandler),
-                               ('/blog/login', LoginHandler),
-                               ('/blog/logout', LogoutHandler),
-                               ('/blog/admin', AdminHandler),
-                               ('/blog/admin-pref', AdminPrefHandler),
-                               ('/blog/pwchange', PasswordChangeHandler),
-                               ('/blog/userchange', UsernameChangeHandler),
-                               ('/blog/(\d+)', PermalinkHandler),
-                               ('/blog/tags/(.*)', TagHandler),
-                               ('/blog/archive/(\d{4})', ArchiveHandler)],
-                                debug=True)
-
-app.error_handlers[404] = util.handle_error
-if not app.debug:
-    app.error_handlers[500] = util.handle_error

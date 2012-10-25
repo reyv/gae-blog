@@ -84,17 +84,19 @@ def tag_cache(tag_name, update=False):
 
 
 def archive_cache(archive_year, update=False):
-    previous_year = int(archive_year) + 1
-    first_year = 'DATE(' + archive_year + '-1-1'
-    second_year = 'DATE(' + str(previous_year) + '-1-1'
+    next_year = str(int(archive_year) + 1)
+    first_year = '%s-1-1' %archive_year
+    second_year = '%s-1-1' %next_year
 
     key = 'archive_%s' % archive_year
     year = memcache.get(key)
     if year is None or update:
         logging.error('DB Query: Archive')
-        year = db.GqlQuery("""  SELECT * FROM BlogPost
-                                WHERE created >= :1
-                                AND created < :2 """, first_year, second_year
+        year = db.GqlQuery("""SELECT * FROM BlogPost
+                                WHERE created >= DATE(:first_year)
+                                AND created < DATE(:second_year) """, 
+                                first_year = first_year,
+                                second_year = second_year
                             )
         memcache.set(key, year)
     return year
@@ -144,7 +146,7 @@ def send_mail(email, email_subject, email_message):
 
 
 def generate(template_name, **kwargs):
-    path = os.path.join(os.path.dirname(__file__), 'html/')
+    path = os.path.join(os.path.dirname(__file__), 'static/html/blog')
     jinja_environment = jinja2.Environment(
                         loader=jinja2.FileSystemLoader(path),
                             autoescape=False)
