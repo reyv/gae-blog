@@ -1,9 +1,9 @@
 import webapp2
 import os
 import jinja2
-import models
-import config
-import util
+import blog_models
+import blog_config
+import blog_util
 import logging
 
 from google.appengine.ext import db
@@ -14,12 +14,12 @@ class BaseRequestHandler(webapp2.RequestHandler):
     generate() augments the template variables."""
 
     def generate(self, template_name, template_values={}):
-        values = {'blog_name': config.blog_name,
-                    'twitter_url': config.twitter_url,
-                    'google_plus_url': config.google_plus_url,
-                    'linkedin_url': config.linkedin_url,
-                    'tag_list': util.generate_tag_list(),
-                    'archive_list': util.generate_archive_list()
+        values = {'blog_name': blog_config.blog_name,
+                    'twitter_url': blog_config.twitter_url,
+                    'google_plus_url': blog_config.google_plus_url,
+                    'linkedin_url': blog_config.linkedin_url,
+                    'tag_list': blog_util.generate_tag_list(),
+                    'archive_list': blog_util.generate_archive_list()
                     }
         values.update(template_values)
         path = os.path.join(os.path.dirname(__file__), 'static/html/blog/')
@@ -30,7 +30,7 @@ class BaseRequestHandler(webapp2.RequestHandler):
         self.response.out.write(template.render(values))
 
     def set_secure_cookie(self, name, value):
-        hashed_user = util.make_secure_val(value)
+        hashed_user = blog_util.make_secure_val(value)
         self.response.headers.add_header('Set-Cookie', '%s=%s; Path=/'
                                             % (name, hashed_user))
 
@@ -40,7 +40,7 @@ class BaseRequestHandler(webapp2.RequestHandler):
     def check_secure_cookie(self):
         try:
             user_id_cookie_val = self.request.cookies.get('user_id')
-            return util.check_secure_val(user_id_cookie_val)
+            return blog_util.check_secure_val(user_id_cookie_val)
         except AttributeError:
             return None
 
@@ -68,32 +68,32 @@ class NewPostHandler(BaseRequestHandler):
 
         if subject and content and tag and image_url:
             if preview:
-                preview = models.PostPreview(subject=subject,
+                preview = blog_models.PostPreview(subject=subject,
                                                 content=content,
                                                 image_url=image_url,
                                                 tag=tag,
-                                                author=config.blog_author,
+                                                author=blog_config.blog_author,
                                                 key_name='preview')
                 preview.put()
                 self.redirect('/blog/newpost/preview')
                 return
             else:
-                blog_entry = models.BlogPost(subject=subject,
+                blog_entry = blog_models.BlogPost(subject=subject,
                                                 content=content,
                                                 image_url=image_url,
                                                 tag=tag,
-                                                author=config.blog_author)
+                                                author=blog_config.blog_author)
                 blog_entry.put()
                 post_id = str(blog_entry.key().id())
                 blog_entry.post_id = post_id
                 blog_entry.put()
 
                 #rerun query and update the cache.
-                util.main_page_posts(True)
-                util.tag_cache(tag, True)
+                blog_util.main_page_posts(True)
+                blog_util.tag_cache(tag, True)
                 archive_year = blog_entry.created.strftime('%Y')
-                util.archive_cache(archive_year, True)
-                util.visits_cache(True)
+                blog_util.archive_cache(archive_year, True)
+                blog_util.visits_cache(True)
                 self.redirect('/blog/%s' % post_id)
                 return
         else:
@@ -112,7 +112,7 @@ class PreviewHandler(BaseRequestHandler):
     def get(self):
         user = None
         post_key = db.Key.from_path('PostPreview', 'preview')
-        blog_post = models.PostPreview.get(post_key)
+        blog_post = blog_models.PostPreview.get(post_key)
 
         if self.check_secure_cookie():
             user = 'admin'
@@ -129,7 +129,7 @@ class BlogPostHandler(BaseRequestHandler):
     """Main Blog Page Handler"""
     def get(self):
         user = None
-        blog_entries = util.main_page_posts()
+        blog_entries = blog_util.main_page_posts()
         if self.check_secure_cookie():
             user = 'admin'
         self.generate('blog.html', {'blog_entries': blog_entries,
@@ -144,7 +144,7 @@ class PermalinkHandler(BaseRequestHandler):
 
         # postid variable gets passed in (i.e. /blog/(\d+))
         post_num = int(post_id)
-        blog_post = models.BlogPost.get_by_id(post_num)
+        blog_post = blog_models.BlogPost.get_by_id(post_num)
         logging.error('DB write: Permalink Visit')
         blog_post.visits += 1
         blog_post.put()
@@ -164,7 +164,7 @@ class PermalinkHandler(BaseRequestHandler):
 class TagHandler(BaseRequestHandler):
     """Tag Page Handler"""
     def get(self, tag_name):
-        tag_list = dict(util.generate_tag_list())
+        tag_list = dict(blog_util.generate_tag_list())
         user = None
         if self.check_secure_cookie():
             user = 'admin'
@@ -172,7 +172,7 @@ class TagHandler(BaseRequestHandler):
             self.redirect('/blog')
             return
         else:
-            blog_entries = util.tag_cache(tag_name)
+            blog_entries = blog_util.tag_cache(tag_name)
             self.generate('blog.html', {
                             'blog_entries': blog_entries,
                             'user': user
@@ -182,7 +182,7 @@ class TagHandler(BaseRequestHandler):
 class ArchiveHandler(BaseRequestHandler):
     """Archive Page Handler"""
     def get(self, archive_year):
-        archive_list = dict(util.generate_archive_list())
+        archive_list = dict(blog_util.generate_archive_list())
         user = None
         if self.check_secure_cookie():
             user = 'admin'
@@ -190,7 +190,7 @@ class ArchiveHandler(BaseRequestHandler):
             self.redirect('/blog')
             return
         else:
-            blog_entries = util.archive_cache(archive_year)
+            blog_entries = blog_util.archive_cache(archive_year)
             self.generate('blog.html', {
                             'blog_entries': blog_entries,
                             'user': user
@@ -210,10 +210,10 @@ class LoginHandler(BaseRequestHandler):
         username = str(self.request.get('username'))
         password = str(self.request.get('password'))
 
-        user = models.Admin.login_validation(username)
+        user = blog_models.Admin.login_validation(username)
 
-        if user and util.valid_pw(username, password, user.admin_pw_hash):
-            if util.valid_pw(username, password, user.admin_pw_hash):
+        if user and blog_util.valid_pw(username, password, user.admin_pw_hash):
+            if blog_util.valid_pw(username, password, user.admin_pw_hash):
                 self.set_secure_cookie('user_id', str(user.key().id()))
                 self.redirect('/blog/newpost')
                 return
@@ -261,7 +261,7 @@ class ContactHandler(BaseRequestHandler):
         email_user = self.request.get('email_from')
         email_subject = self.request.get('email_subject')
         email_message = self.request.get('email_message')
-        message = util.send_mail(email_user, email_subject, email_message)
+        message = blog_util.send_mail(email_user, email_subject, email_message)
         self.generate('contact.html', {
                                         'message': message,
                                         'user': 'admin'
@@ -297,11 +297,16 @@ class UsernameChangeHandler(BaseRequestHandler):
         password = str(self.request.get('password'))
 
         user_id_cookie_val = self.request.cookies.get('user_id')
-        u = models.Admin.get_user(user_id_cookie_val)
+        u = blog_models.Admin.get_user(user_id_cookie_val)
 
-        if u and util.valid_pw(u.admin_username, password, u.admin_pw_hash):
-            if util.valid_pw(u.admin_username, password, u.admin_pw_hash):
-                u.admin_pw_hash = util.make_pw_hash(new_username, password)
+        if u and blog_util.valid_pw(u.admin_username,
+                                        password,
+                                            u.admin_pw_hash):
+            if blog_util.valid_pw(u.admin_username,
+                                        password,
+                                            u.admin_pw_hash):
+                u.admin_pw_hash = blog_util.make_pw_hash(new_username,
+                                                            password)
                 u.admin_username = new_username
                 u.put()
                 self.generate('username-change.html', {
@@ -346,8 +351,8 @@ class PasswordChangeHandler(BaseRequestHandler):
                     })
         else:
             user_id_cookie_val = self.request.cookies.get('user_id')
-            user = models.Admin.get_user(user_id_cookie_val)
-            user.admin_pw_hash = util.make_pw_hash(
+            user = blog_models.Admin.get_user(user_id_cookie_val)
+            user.admin_pw_hash = blog_util.make_pw_hash(
                                                 user.admin_username, password)
             user.put()
             self.generate('pw-change.html', {
@@ -360,7 +365,7 @@ class PostHistoryHandler(BaseRequestHandler):
     """Post History Handler"""
     def get(self):
         user = None
-        blog_entries = util.visits_cache()
+        blog_entries = blog_util.visits_cache()
         if self.check_secure_cookie():
             user = 'admin'
         self.generate('post-history.html', {'blog_entries': blog_entries,
@@ -371,8 +376,9 @@ class PostHistoryHandler(BaseRequestHandler):
 class AdminHandler(BaseRequestHandler):
     #FOR TESTING PURPOSES ONLY
     def get(self):
-        pw_hash = util.make_pw_hash(config.admin_username, config.admin_pw)
-        admin = models.Admin(admin_username=config.admin_username,
+        pw_hash = blog_util.make_pw_hash(blog_config.admin_username,
+                                            blog_config.admin_pw)
+        admin = blog_models.Admin(admin_username=blog_config.admin_username,
                                 admin_pw_hash=pw_hash)
         admin.put()
         self.redirect('/blog')
