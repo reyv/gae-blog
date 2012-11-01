@@ -8,6 +8,7 @@ skip_files:
 - ^(.*/)?.*~
 - ^(.*/)?.*\.py[co]
 - ^(.*/)?.*\.db
+- ^(.*/)?.*\.txt
 
 handlers:
 - url: /favicon\.ico

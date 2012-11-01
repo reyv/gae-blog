@@ -85,8 +85,8 @@ def tag_cache(tag_name, update=False):
 
 def archive_cache(archive_year, update=False):
     next_year = str(int(archive_year) + 1)
-    first_year = '%s-1-1' %archive_year
-    second_year = '%s-1-1' %next_year
+    first_year = '%s-1-1' % archive_year
+    second_year = '%s-1-1' % next_year
 
     key = 'archive_%s' % archive_year
     year = memcache.get(key)
@@ -94,13 +94,25 @@ def archive_cache(archive_year, update=False):
         logging.error('DB Query: Archive')
         year = db.GqlQuery("""SELECT * FROM BlogPost
                                 WHERE created >= DATE(:first_year)
-                                AND created < DATE(:second_year) """, 
-                                first_year = first_year,
-                                second_year = second_year
+                                AND created < DATE(:second_year) """,
+                                first_year=first_year,
+                                second_year=second_year
                             )
         memcache.set(key, year)
     return year
 
+
+def visits_cache(update=False):
+    key = 'visits_cache'
+    posts = memcache.get(key)
+    if posts is None or update:
+        logging.error('DB Query: Visits Sorting DESC')
+        posts = db.GqlQuery("""SELECT *
+                            FROM BlogPost
+                            ORDER BY visits DESC"""
+                            )
+        memcache.set(key, posts)
+    return posts
 
 #Misc. Functions
 

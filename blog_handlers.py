@@ -4,6 +4,7 @@ import jinja2
 import models
 import config
 import util
+import logging
 
 from google.appengine.ext import db
 
@@ -92,6 +93,7 @@ class NewPostHandler(BaseRequestHandler):
                 util.tag_cache(tag, True)
                 archive_year = blog_entry.created.strftime('%Y')
                 util.archive_cache(archive_year, True)
+                util.visits_cache(True)
                 self.redirect('/blog/%s' % post_id)
                 return
         else:
@@ -143,6 +145,9 @@ class PermalinkHandler(BaseRequestHandler):
         # postid variable gets passed in (i.e. /blog/(\d+))
         post_num = int(post_id)
         blog_post = models.BlogPost.get_by_id(post_num)
+        logging.error('DB write: Permalink Visit')
+        blog_post.visits += 1
+        blog_post.put()
 
         if self.check_secure_cookie():
             user = 'admin'
@@ -349,6 +354,18 @@ class PasswordChangeHandler(BaseRequestHandler):
                                 'error_change_pw': 'Password changed.',
                                 'user': user
                                 })
+
+
+class PostHistoryHandler(BaseRequestHandler):
+    """Post History Handler"""
+    def get(self):
+        user = None
+        blog_entries = util.visits_cache()
+        if self.check_secure_cookie():
+            user = 'admin'
+        self.generate('post-history.html', {'blog_entries': blog_entries,
+                        'user': user
+                        })
 
 
 class AdminHandler(BaseRequestHandler):

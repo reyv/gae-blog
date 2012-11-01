@@ -16,6 +16,7 @@ routes = [('/blog/?', blog_handlers.BlogPostHandler),
             ('/blog/admin-pref', blog_handlers.AdminPrefHandler),
             ('/blog/pwchange', blog_handlers.PasswordChangeHandler),
             ('/blog/userchange', blog_handlers.UsernameChangeHandler),
+            ('/blog/post-history', blog_handlers.PostHistoryHandler),
             ('/blog/(\d+)', blog_handlers.PermalinkHandler),
             ('/blog/tags/(.*)', blog_handlers.TagHandler),
             ('/blog/archive/(\d{4})', blog_handlers.ArchiveHandler)]

@@ -12,6 +12,7 @@ class BlogPost(db.Model):
     image_url = db.StringProperty()
     tag = db.StringProperty(required=True)
     author = db.StringProperty()
+    visits = db.IntegerProperty(default=0)
 
 
 class PostPreview(BlogPost):
