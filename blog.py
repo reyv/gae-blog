@@ -3,7 +3,6 @@ import webapp2
 import blog_handlers
 import blog_util
 
-__author__ = 'Rey Villa'
 
 routes = [('/blog/?', blog_handlers.BlogPostHandler),
             ('/blog/newpost', blog_handlers.NewPostHandler),

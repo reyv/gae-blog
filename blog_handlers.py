@@ -15,17 +15,18 @@ class BaseRequestHandler(webapp2.RequestHandler):
 
     def generate(self, template_name, template_values={}):
         values = {'blog_name': blog_config.blog_name,
-                    'twitter_url': blog_config.twitter_url,
-                    'google_plus_url': blog_config.google_plus_url,
-                    'linkedin_url': blog_config.linkedin_url,
-                    'tag_list': blog_util.generate_tag_list(),
-                    'archive_list': blog_util.generate_archive_list()
-                    }
+                  'twitter_url': blog_config.twitter_url,
+                  'google_plus_url': blog_config.google_plus_url,
+                  'linkedin_url': blog_config.linkedin_url,
+                  'tag_list': blog_util.generate_tag_list(),
+                  'archive_list': blog_util.generate_archive_list()
+                  }
         values.update(template_values)
         path = os.path.join(os.path.dirname(__file__), 'static/html/blog/')
         jinja_environment = jinja2.Environment(
                                 loader=jinja2.FileSystemLoader(path),
-                                    autoescape=False)
+                                autoescape=False
+                                )
         template = jinja_environment.get_template(template_name)
         self.response.out.write(template.render(values))
 
@@ -119,10 +120,9 @@ class PreviewHandler(BaseRequestHandler):
         if not blog_post:
             self.generate('error.html', {})
         else:
-            self.generate('preview.html', {
-                                        'preview': blog_post,
-                                        'user': user
-                                         })
+            self.generate('preview.html',
+                         {'preview': blog_post,
+                          'user': user})
 
 
 class BlogPostHandler(BaseRequestHandler):
@@ -132,9 +132,9 @@ class BlogPostHandler(BaseRequestHandler):
         blog_entries = blog_util.main_page_posts()
         if self.check_secure_cookie():
             user = 'admin'
-        self.generate('blog.html', {'blog_entries': blog_entries,
-                        'user': user
-                        })
+        self.generate('blog.html',
+                     {'blog_entries': blog_entries,
+                      'user': user})
 
 
 class PermalinkHandler(BaseRequestHandler):
@@ -154,11 +154,11 @@ class PermalinkHandler(BaseRequestHandler):
         if not blog_post:
             self.generate('error.html', {})
         else:
-            self.generate('blogpost.html', {
-                            'blog_post': blog_post,
-                            'post_id': post_id,
-                            'user': user
-                            })
+            self.generate('blogpost.html',
+                          {'blog_post': blog_post,
+                           'post_id': post_id,
+                           'blog_author_link': blog_config.blog_author_link,
+                           'user': user})
 
 
 class TagHandler(BaseRequestHandler):

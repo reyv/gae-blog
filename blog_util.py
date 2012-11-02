@@ -157,7 +157,7 @@ def send_mail(email, email_subject, email_message):
 # URL Exception Handling
 
 
-def generate(template_name, **kwargs):
+def generate_template(template_name, **kwargs):
     path = os.path.join(os.path.dirname(__file__), 'static/html/blog')
     jinja_environment = jinja2.Environment(
                         loader=jinja2.FileSystemLoader(path),
@@ -170,5 +170,8 @@ def handle_error(request, response, exception):
     status_code = exception.status_int or 500
     logging.exception(exception)
     var = {'status_code': status_code}
-    response.write(generate('error.html', **var))
+    response.write(generate_template('error.html', **var))
     response.set_status(status_code)
+
+
+#Template variables

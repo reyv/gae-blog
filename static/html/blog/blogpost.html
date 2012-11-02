@@ -8,7 +8,7 @@
 	
 	<div class="span8">
             <h3 class="post_subject">{{blog_post.subject}}</h3>
-	  <div><b>By:</b> {{blog_post.author}}</div>
+	  <div><b>By:</b> <a href="{{blog_author_link}}">{{blog_post.author}}</a></div>
 	  <div><b>Date:</b> {{blog_post.created.strftime("%b %d,%Y")}}</div>
 	  <div><b>Tag:</b> <a href="/blog/tags/{{blog_post.tag}}">{{blog_post.tag}}</a></div>
 	</div>

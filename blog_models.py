@@ -9,7 +9,7 @@ class BlogPost(db.Model):
     created = db.DateProperty(auto_now_add=True)
     last_modified = db.DateTimeProperty(auto_now=True)
     post_id = db.StringProperty()
-    image_url = db.StringProperty()
+    image_url = db.StringProperty(required=True)
     tag = db.StringProperty(required=True)
     author = db.StringProperty()
     visits = db.IntegerProperty(default=0)
@@ -23,15 +23,18 @@ class PostPreview(BlogPost):
 class Admin(db.Model):
     """Model class for Admin login"""
     admin_username = db.StringProperty(required=True,
-                                        default=blog_config.admin_username)
+                                       default=blog_config.admin_username
+                                       )
     admin_pw_hash = db.StringProperty(required=True,
-                                        default=blog_config.admin_pw)
+                                      default=blog_config.admin_pw
+                                      )
 
     @classmethod
     def login_validation(cls, username):
         try:
-            q = db.GqlQuery("SELECT * from Admin WHERE admin_username='%s'"
-                                % username)
+            q = db.GqlQuery("SELECT * from Admin WHERE admin_username= :1",
+                            username
+                            )
             return q[0]
         except IndexError:
             return None
@@ -45,5 +48,5 @@ class Admin(db.Model):
 
 class SubscribeEmail(db.Model):
     """Model class for Receiving Subscribe Emails"""
-    email = db.StringProperty(required=True)
+    email = db.EmailProperty(required=True)
     created = db.DateTimeProperty(auto_now_add=True)
