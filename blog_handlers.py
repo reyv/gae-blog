@@ -1,6 +1,4 @@
 import webapp2
-import os
-import jinja2
 import blog_models
 import blog_config
 import blog_util
@@ -13,22 +11,19 @@ class BaseRequestHandler(webapp2.RequestHandler):
     """Supplies a common template generation function.
     generate() augments the template variables."""
 
+    blog_values = {'blog_name': blog_config.blog_name,
+                   'twitter_url': blog_config.twitter_url,
+                   'google_plus_url': blog_config.google_plus_url,
+                   'linkedin_url': blog_config.linkedin_url,
+                   'tag_list': blog_util.generate_tag_list(),
+                   'archive_list': blog_util.generate_archive_list()
+                   }
+
     def generate(self, template_name, template_values={}):
-        values = {'blog_name': blog_config.blog_name,
-                  'twitter_url': blog_config.twitter_url,
-                  'google_plus_url': blog_config.google_plus_url,
-                  'linkedin_url': blog_config.linkedin_url,
-                  'tag_list': blog_util.generate_tag_list(),
-                  'archive_list': blog_util.generate_archive_list()
-                  }
-        values.update(template_values)
-        path = os.path.join(os.path.dirname(__file__), 'static/html/blog/')
-        jinja_environment = jinja2.Environment(
-                                loader=jinja2.FileSystemLoader(path),
-                                autoescape=False
-                                )
-        template = jinja_environment.get_template(template_name)
-        self.response.out.write(template.render(values))
+        self.blog_values.update(template_values)
+        self.response.out.write(blog_util.generate_template(template_name,
+                                                            **self.blog_values)
+                                                            )
 
     def set_secure_cookie(self, name, value):
         hashed_user = blog_util.make_secure_val(value)

@@ -15,6 +15,18 @@ from google.appengine.ext import db
 from google.appengine.api import mail
 
 
+#Template variables
+
+
+def generate_template(template_name, **kwargs):
+    path = os.path.join(os.path.dirname(__file__), 'static/html/blog')
+    jinja_environment = jinja2.Environment(
+                        loader=jinja2.FileSystemLoader(path),
+                            autoescape=False)
+    template = jinja_environment.get_template(template_name)
+    return template.render(**kwargs)
+
+
 #Hasning functions - cookies
 
 
@@ -157,21 +169,9 @@ def send_mail(email, email_subject, email_message):
 # URL Exception Handling
 
 
-def generate_template(template_name, **kwargs):
-    path = os.path.join(os.path.dirname(__file__), 'static/html/blog')
-    jinja_environment = jinja2.Environment(
-                        loader=jinja2.FileSystemLoader(path),
-                            autoescape=False)
-    template = jinja_environment.get_template(template_name)
-    return template.render(**kwargs)
-
-
 def handle_error(request, response, exception):
     status_code = exception.status_int or 500
     logging.exception(exception)
     var = {'status_code': status_code}
     response.write(generate_template('error.html', **var))
     response.set_status(status_code)
-
-
-#Template variables
