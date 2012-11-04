@@ -1,5 +1,9 @@
 {% extends "base.html" %}
-{% block main %}
+  {% block title %}
+      <title>New Post Preview | {{ blog_name }}</title>
+  {% endblock %}
+
+  {% block main %}
     <article>
       <div>
           <p class="preview_warning">This is only a preview...</p>
@@ -12,7 +16,7 @@
 	<div class="span8">
 	  <h3 class="post_subject">{{preview.subject}}</h3>
 	  <div><b>By:</b>{{preview.author}}</div>
-	  <div><b>Date:</b> {{preview.created.strftime("%b %d,%Y")}} </div>
+	  <div><b>Date:</b> {{preview.created.strftime("%b %d,%Y")}}</div>
 	  <div><b>Tag:</b>{{preview.tag}}</a></div>
 	</div>
       </div>
@@ -21,6 +25,6 @@
       <br/>
       <input class="btn btn-info" type="submit" id="preview-back" value="Back">
     </article>
-{% endblock %}
+  {% endblock %}
 
 

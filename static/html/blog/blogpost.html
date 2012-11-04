@@ -1,9 +1,13 @@
 {% extends "base.html" %}
-{% block main %}
+  {% block title %}
+      <title>{{blog_post.subject}} | {{ blog_name }}</title>
+  {% endblock %}
+
+  {% block main %}
     <article>
       <div class="row-fluid">
 	<div class="span4">
-	  <img class="perma_post_image img-rounded" src="{{blog_post.image_url}}" width="250" height="350" />
+	  <img class="perma_post_image img-rounded" src="{{blog_post.image_url}}" width="250" height="350" alt="{{blog_post.tag}}"/>
 	</div>
 	
 	<div class="span8">
@@ -16,13 +20,13 @@
 
       <div class="post_content">{{blog_post.content}}</di>
       <hr />
+
       <span class='st_googleplus_hcount' displayText='Google +'></span>
       <span class='st_facebook_hcount' displayText='Facebook'></span>
       <span class='st_twitter_hcount' displayText='Tweet'></span>
       <span class='st_linkedin_hcount' displayText='LinkedIn'></span>
       <span class='st_sharethis_hcount' displayText='ShareThis'></span>
-
     </article>	
-{% endblock %}
+  {% endblock %}
 
 

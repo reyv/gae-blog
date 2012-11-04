@@ -1,5 +1,8 @@
-import blog_config
 from google.appengine.ext import db
+
+import blog_config
+import blog_util
+
 
 
 class BlogPost(db.Model):
@@ -11,7 +14,7 @@ class BlogPost(db.Model):
     post_id = db.StringProperty()
     image_url = db.StringProperty(required=True)
     tag = db.StringProperty(required=True)
-    author = db.StringProperty()
+    author = db.StringProperty(default=blog_config.blog_author)
     visits = db.IntegerProperty(default=0)
 
 
@@ -22,28 +25,57 @@ class PostPreview(BlogPost):
 
 class Admin(db.Model):
     """Model class for Admin login"""
-    admin_username = db.StringProperty(required=True,
-                                       default=blog_config.admin_username
-                                       )
-    admin_pw_hash = db.StringProperty(required=True,
-                                      default=blog_config.admin_pw
-                                      )
+    admin_username = db.StringProperty(default=blog_config.admin_username)
+    admin_pw_hash = db.StringProperty(default=blog_config.admin_pw)
 
     @classmethod
     def login_validation(cls, username):
+        """Provides login validation for login"""
         try:
             q = db.GqlQuery("SELECT * from Admin WHERE admin_username= :1",
-                            username
-                            )
+                            username)
             return q[0]
         except IndexError:
             return None
 
     @classmethod
-    def get_user(cls, user_id_cookie_val):
-        user_id = user_id_cookie_val.split('|')[0]
-        user_key = db.Key.from_path('Admin', int(user_id))
-        return db.get(user_key)
+    def change_username(cls, new_username, pw):
+        """Function to change Admin username in preferences page.
+           Password re-hashing is required since the stored password
+           hashes are a function of the username.
+        """
+        if not new_username or not pw:
+            return 'A new username and or password is required. Retry.'
+        elif len(new_username) < 6:
+            return 'Username must be greater than 6 characters'
+        else:
+            admin_key = db.Key.from_path('Admin', 'admin_key_name')
+            admin = Admin.get(admin_key)
+            if not blog_util.valid_pw(admin.admin_username, pw,
+                                      admin.admin_pw_hash):
+                return 'Invalid Password. Please Retry.'
+            else:
+                admin.admin_username = new_username
+                pw_hash = blog_util.make_pw_hash(new_username, pw)
+                admin.admin_pw_hash = pw_hash
+                admin.put()
+                return 'Username change was successful!'
+
+    @classmethod
+    def change_password(cls, password, verify_password):
+        """Function to change Admin password in preferences page"""
+        if password != verify_password:
+            return 'Passwords do not match. Please retry.'
+        elif len(password) < 6:
+            return 'Password must be greater than 6 characters.'
+        else:
+            admin_key = db.Key.from_path('Admin', 'admin_key_name')
+            admin = Admin.get(admin_key)
+            pw_hash = blog_util.make_pw_hash(admin.admin_username,
+                                             password)
+            admin.admin_pw_hash = pw_hash
+            admin.put()
+            return 'Password changed.'
 
 
 class SubscribeEmail(db.Model):

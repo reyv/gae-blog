@@ -1,5 +1,7 @@
 import os
+
 import webapp2
+
 import blog_handlers
 import blog_util
 

@@ -1,28 +1,29 @@
 import os
-import jinja2
 import re
 import hashlib
 import hmac
 import random
 import logging
-import blog_config
-import blog_models
-
 from string import letters
 from collections import Counter
+
+import jinja2
 from google.appengine.api import memcache
 from google.appengine.ext import db
 from google.appengine.api import mail
+
+import blog_config
+import blog_models
 
 
 #Template variables
 
 
 def generate_template(template_name, **kwargs):
+    """Template generation helper function"""
     path = os.path.join(os.path.dirname(__file__), 'static/html/blog')
-    jinja_environment = jinja2.Environment(
-                        loader=jinja2.FileSystemLoader(path),
-                            autoescape=False)
+    jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(path),  # lint:ok
+                                           autoescape=False)
     template = jinja_environment.get_template(template_name)
     return template.render(**kwargs)
 
@@ -30,18 +31,25 @@ def generate_template(template_name, **kwargs):
 #Hasning functions - cookies
 
 
-def hash_str(s):
+def random_letters():
+    """Generates random letters for cookie name to provide unique
+       name for each login.
+    """
+    return ''.join(random.choice(letters) for x in blog_config.cookie_secret)
 
+
+def hash_str(s):
+    """Hashing of cookies for Admin login."""
     return hmac.new(blog_config.cookie_secret, s).hexdigest()
 
 
 def make_secure_val(s):
-
-    return "%s|%s" % (s, hash_str(s))
+    """Makes a secure hash in the form of name | hashed value"""
+    return "{s}|{hash}".format(s=s, hash=hash_str(s))
 
 
 def check_secure_val(h):
-
+    """Checkes to make sure that cookies are valid for accessing Admin pref"""
     val = h.split('|')[0]
     if h == make_secure_val(val):
         return val
@@ -50,20 +58,20 @@ def check_secure_val(h):
 
 
 def make_salt(length=blog_config.salt_length):
-
+    """Makes a salt for passwords that is stored in the db"""
     return ''.join(random.choice(letters) for x in xrange(length))
 
 
 def make_pw_hash(username, password, salt=None):
-
+    """Hashes the password to include the salt, which is stored in the db"""
     if not salt:
         salt = make_salt()
     h = hashlib.sha256(username + password + salt).hexdigest()
-    return '%s,%s' % (salt, h)
+    return '{salt},{h}'.format(salt=salt, h=h)
 
 
 def valid_pw(username, password, h):
-
+    """Checks to see if pasword is valid based on the stored hash"""
     salt = h.split(',')[0]
     return h == make_pw_hash(username, password, salt)
 
@@ -71,58 +79,60 @@ def valid_pw(username, password, h):
 
 
 def main_page_posts(update=False):
+    """Caching for top 10 posts shown in the Blog Main Page"""
     key = 'main_page_posts'
     posts = memcache.get(key)
     if posts is None or update:
         logging.error('DB Query: Main Page')
         posts = db.GqlQuery("""SELECT *
                             FROM BlogPost
-                            ORDER BY created DESC LIMIT 10"""
-                            )
+                            ORDER BY created
+                            DESC LIMIT 10
+                            """)
         memcache.set(key, posts)
     return posts
 
 
 def tag_cache(tag_name, update=False):
-    key = 'tag_%s' % tag_name
+    """Stores cache for all tags to be displayed on every Blog Page"""
+    key = 'tag_{tag_name}'.format(tag_name=tag_name)
     tag = memcache.get(key)
     if tag is None or update:
         logging.error('DB Query: Tag')
         tag = db.GqlQuery(""" SELECT * FROM BlogPost
-                              WHERE tag = :1""", tag_name
-                         )
+                              WHERE tag = :1""", tag_name)
         memcache.set(key, tag)
     return tag
 
 
 def archive_cache(archive_year, update=False):
+    """Stores cache for all archive years to be displayed on every Bog page"""
     next_year = str(int(archive_year) + 1)
-    first_year = '%s-1-1' % archive_year
-    second_year = '%s-1-1' % next_year
+    first_year = '{year}-1-1'.format(year=archive_year)
+    second_year = '{year}-1-1'.format(year=next_year)
 
-    key = 'archive_%s' % archive_year
+    key = 'archive_{year}'.format(year=archive_year)
     year = memcache.get(key)
     if year is None or update:
         logging.error('DB Query: Archive')
         year = db.GqlQuery("""SELECT * FROM BlogPost
                                 WHERE created >= DATE(:first_year)
-                                AND created < DATE(:second_year) """,
-                                first_year=first_year,
-                                second_year=second_year
-                            )
+                                AND created < DATE(:second_year)
+                           """, first_year=first_year, second_year=second_year)
         memcache.set(key, year)
     return year
 
 
 def visits_cache(update=False):
+    """Stores cache of the Number of visits to be displayed in Admin pref."""
     key = 'visits_cache'
     posts = memcache.get(key)
     if posts is None or update:
         logging.error('DB Query: Visits Sorting DESC')
         posts = db.GqlQuery("""SELECT *
                             FROM BlogPost
-                            ORDER BY visits DESC"""
-                            )
+                            ORDER BY visits DESC
+                            """)
         memcache.set(key, posts)
     return posts
 
@@ -130,6 +140,7 @@ def visits_cache(update=False):
 
 
 def generate_tag_list():
+    """Queries db for a unique list of tags sorted alphabetically"""
     tag_entries = db.GqlQuery("SELECT tag FROM BlogPost")
     tags_all = [str(item.tag) for item in tag_entries]  # excecute query
     c = Counter(tags_all)    # provides dict with count of each tag
@@ -137,13 +148,13 @@ def generate_tag_list():
 
 
 def generate_archive_list():
+    """Queries db for a unique list of archive years sorted desc"""
     archive = db.GqlQuery("""   SELECT *
                                 FROM BlogPost
-                                WHERE created>DATE('2010-1-1')
-                            """)
+                                WHERE created>DATE('2009-1-1')
+                          """)
     # excecute query
     archive_years = [str(item.created.strftime('%Y')) for item in archive]
-
     c = Counter(archive_years)    # provides dict with count of each year
     return sorted(c.iteritems())  # returns list w/ ordered tuples
 
@@ -156,7 +167,7 @@ def send_mail(email, email_subject, email_message):
     match = re.match(r'\w+\.?\w+@\w+\.\w{2,3}', email)
     if match:
         message = mail.EmailMessage(sender=blog_config.email_from,
-                                        subject=email_subject)
+                                    subject=email_subject)
         message.to = blog_config.email_to
         message.html = email_message + '<br /><br /> The sender is ' + email
         message.send()
@@ -170,8 +181,40 @@ def send_mail(email, email_subject, email_message):
 
 
 def handle_error(request, response, exception):
+    """Handles errors for URL requests that are not handled by server"""
     status_code = exception.status_int or 500
     logging.exception(exception)
     var = {'status_code': status_code}
     response.write(generate_template('error.html', **var))
     response.set_status(status_code)
+
+# New Post Functions
+
+
+def newpost_redirect(subject, content, tag, image_url, preview):
+    """Helper function for NewPost Handler"""
+    if preview:
+        preview = blog_models.PostPreview(subject=subject,
+                                          content=content,
+                                          image_url=image_url,
+                                          tag=tag,
+                                          key_name='preview')
+        preview.put()
+        return '/blog/newpost/preview'
+    else:
+        blog_entry = blog_models.BlogPost(subject=subject,
+                                          content=content,
+                                          image_url=image_url,
+                                          tag=tag)
+        blog_entry.put()
+        post_id = str(blog_entry.key().id())
+        blog_entry.post_id = post_id
+        blog_entry.put()
+
+        #rerun query and update the cache.
+        main_page_posts(True)
+        tag_cache(tag, True)
+        archive_year = blog_entry.created.strftime('%Y')
+        archive_cache(archive_year, True)
+        visits_cache(True)
+        return '/blog/{post_id}'.format(post_id=post_id)
