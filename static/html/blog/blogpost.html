@@ -15,6 +15,9 @@
 	  <div><b>By:</b> <a href="{{blog_author_link}}">{{blog_post.author}}</a></div>
 	  <div><b>Date:</b> {{blog_post.created.strftime("%b %d,%Y")}}</div>
 	  <div><b>Tag:</b> <a href="/blog/tags/{{blog_post.tag}}">{{blog_post.tag}}</a></div>
+	  {% if user %}
+	  <div><b>Admin:</b> <a href="/blog/post-change?q={{blog_post.post_id}}">Edit Post</a></div>
+	  {% endif %}
 	</div>
       </div>
 
