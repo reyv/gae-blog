@@ -1,3 +1,4 @@
+import cgi
 import logging
 
 import webapp2
@@ -11,18 +12,20 @@ import blog_util
 class BaseRequestHandler(webapp2.RequestHandler):
     """Base Handler for all Requests"""
     blog_values = {'blog_name': blog_config.blog_name,
+                   'blog_desc': blog_config.blog_desc,
                    'twitter_url': blog_config.twitter_url,
                    'google_plus_url': blog_config.google_plus_url,
                    'linkedin_url': blog_config.linkedin_url,
-                   'tag_list': blog_util.generate_tag_list(),
-                   'archive_list': blog_util.generate_archive_list(),
                    'user': None}
 
     def generate(self, template_name, template_values={}):
         """Supplies a common template generation function.
            generate() augments the template variables.
         """
+        side_bar_data = {'tag_list': blog_util.generate_tag_list(),
+                         'archive_list': blog_util.generate_archive_list()}
         self.blog_values.update(template_values)
+        self.blog_values.update(side_bar_data)
         self.response.out.write(blog_util.generate_template(template_name,
                                                             **self.blog_values)
                                                             )
@@ -56,6 +59,19 @@ class BaseRequestHandler(webapp2.RequestHandler):
         else:
             self.blog_values['user'] = 'admin'
             self.generate(template, {})
+
+    def post_eval(self, preview, update, **params):
+        if params:
+            self.redirect(blog_util.post_helper(params['subject'],
+                                                params['content'],
+                                                params['image_url'],
+                                                params['tag'],
+                                                preview,
+                                                update))
+            return
+        else:
+            params.update({'newpost_error': 'All fields  are required!'})
+            self.generate('newpost.html', **params)
 
 
 class BlogPostHandler(BaseRequestHandler):
@@ -114,7 +130,6 @@ class ArchiveHandler(BaseRequestHandler):
 
 class NewPostHandler(BaseRequestHandler):
     """Generages and Handles New Blog Post Entires."""
-
     def get(self):
         if self.check_secure_cookie():
             self.blog_values['user'] = 'admin'
@@ -124,25 +139,10 @@ class NewPostHandler(BaseRequestHandler):
             return
 
     def post(self):
-        subject = self.request.get('subject')
-        content = self.request.get('content')
-        content = content.replace('\n', '<br>')
-        image_url = self.request.get('image_url')
-        tag = self.request.get('tag')
+        update = None
         preview = self.request.POST.get('Preview', None)
-
-        if subject and content and tag and image_url:
-            self.redirect(blog_util.newpost_redirect(subject, content,
-                                                     tag, image_url,
-                                                     preview))
-            return
-        else:
-            self.generate('newpost.html',
-                          {'newpost_error': 'All fields  are required!',
-                           'subject': subject,
-                           'content': content,
-                           'image_url': image_url,
-                           'tag': tag})
+        params = blog_util.blog_post_param(self.request)
+        self.post_eval(preview, update, **params)
 
 
 class PreviewHandler(BaseRequestHandler):
@@ -156,6 +156,29 @@ class PreviewHandler(BaseRequestHandler):
             self.generate('error.html', {})
         else:
             self.generate('preview.html', {'preview': blog_post})
+
+
+class EditPostHandler(BaseRequestHandler):
+    """Handler to Edit Blog Post Entries"""
+    def get(self):
+        if self.check_secure_cookie():
+            self.blog_values['user'] = 'admin'
+            post_id = int(self.request.get('q'))
+            blog_post = blog_models.BlogPost.get_by_id(post_id)
+            self.generate('newpost.html',
+                          {'subject': blog_post.subject,
+                           'content': blog_post.content,
+                           'image_url': blog_post.image_url,
+                           'tag': blog_post.tag})
+        else:
+            self.redirect('/blog/login')
+            return
+
+    def post(self):
+        update = int(self.request.get('q'))
+        preview = self.request.POST.get('Preview', None)
+        params = blog_util.blog_post_param(self.request)
+        self.post_eval(preview, update, **params)
 
 
 class LoginHandler(BaseRequestHandler):
@@ -178,7 +201,7 @@ class LoginHandler(BaseRequestHandler):
             if blog_util.valid_pw(username, password, user.admin_pw_hash):
                 # var added to 'admin' to provide unique cookie for each login
                 var = blog_util.random_letters()
-                self.set_secure_cookie('user_id', 'admin'+var)
+                self.set_secure_cookie('user_id', 'admin' + var)
                 self.redirect('/blog/admin-pref')
                 return
         else:
@@ -209,9 +232,9 @@ class ContactHandler(BaseRequestHandler):
         self.generate('contact.html', {})
 
     def post(self):
-        email_user = self.request.get('email_from')
-        email_subject = self.request.get('email_subject')
-        email_message = self.request.get('email_message')
+        email_user = cgi.escape(self.request.get('email_from'))
+        email_subject = cgi.escape(self.request.get('email_subject'))
+        email_message = cgi.escape(self.request.get('email_message'))
         message = blog_util.send_mail(email_user, email_subject, email_message)
         self.generate('contact.html', {'message': message})
 
@@ -233,6 +256,7 @@ class UsernameChangeHandler(BaseRequestHandler):
         message = blog_models.Admin.change_username(new_username, pw)
         self.generate('username-change.html',
                       {'message_change_username': message})
+
 
 class PasswordChangeHandler(BaseRequestHandler):
     def get(self):

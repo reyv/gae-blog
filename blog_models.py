@@ -4,7 +4,6 @@ import blog_config
 import blog_util
 
 
-
 class BlogPost(db.Model):
     """Model class for blog posts"""
     subject = db.StringProperty(required=True)
@@ -80,5 +79,5 @@ class Admin(db.Model):
 
 class SubscribeEmail(db.Model):
     """Model class for Receiving Subscribe Emails"""
-    email = db.EmailProperty(required=True)
+    email = db.StringProperty(required=True)
     created = db.DateTimeProperty(auto_now_add=True)

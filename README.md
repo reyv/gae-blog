@@ -25,11 +25,20 @@ Instructions
 
 Once the app has been uploaded to your App Engine Account, do the following steps:
 
-- Visit http://www.YOURDOMAINNAME.com/blog/admin to create an initial admin account.
+- Download files to the directory you want to upload to Google App Engine.
+- Once all the files have been uploaded, visit http://www.YOURDOMAINNAME.com/blog/admin to create an 
+  initial admin account.
 - The default username and password in the config.py file is 'admin' and 'password', respectively.
 - Visit the login section of the page and type in the default username and password.
 - Visit the change username and change password sections of the site to create a unique username
-   and a more secure password.
-- Once this is complete, open the main.py file and delete the AdminHandler class towards the bottom.
-- Delete '('/blog/admin', AdminHandler),' from the url routing list towards the bottom of the file.
+  and a more secure password.
+- Once this is complete, open the blog_handlers.py file and delete the AdminHandler class towards the bottom.
+- Delete '('/blog/admin', AdminHandler),' from the url routing list in the blog.py file.
+- Upload the files once again to Google App Engine, which should disable the '/blog/admin' URI from working.
 - You are ready to use the blog.
+
+
+Sample Site
+============
+
+A sample version of this blog is located at http://gae-simple-blog.appspot.com/blog

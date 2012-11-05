@@ -1,6 +1,10 @@
 #Blog Name
 blog_name = 'My Blog'
 
+#Blog Description. This will be used for meta tag description for
+#Pages that are not individual blog posts
+blog_desc = 'This is my blog. This is my blog. This is my blog. This is my.'
+
 #Author name
 blog_author = 'Author A'
 blog_author_link = '/blog/about'  # An HTTP link to Author BIO
