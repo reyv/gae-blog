@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+  {% block title %}
+      <title>Change Password Admin | {{ blog_name }}</title>
+  {% endblock %}
+
+  {% block meta_desc %}
+      <meta name="description" content="{{blog_desc}}">
+  {% endblock %}
+
+  {% block main %}
+    <h3>Change Password</h3>
+      <form method="post">
+        <div class="control-group">
+          <label class="control-label bold" for="inputText">New Password (Minimum of 6 Characters)</label>
+          <div class="controls">
+           <input class="input-large" type="password" name="password" placeholder="Password..." required />
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label bold" for="inputText">Verify Password</label>
+          <div class="controls">
+            <input class="input-large" type="password" name="verify_password" placeholder="Password..." required />
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label"></label>
+          <div class="controls">
+            <input class="btn btn-info" type="submit" value="Change Password">
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label"></label>
+          <div class="controls">
+            <div class="error">{{message_change_pw}}</div>
+          </div>
+        </div>
+      </form>
+  {% endblock %}
+
+

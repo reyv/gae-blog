@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+  {% block title %}
+      <title>Admin Preferences | {{ blog_name }}</title>
+  {% endblock %}
+
+  {% block meta_desc %}
+      <meta name="description" content="{{blog_desc}}">
+  {% endblock %}
+
+  {% block main %}
+    <h3>Admin Preferences</h3>
+
+    <div class="control-group">
+      <div class="controls">
+        <a href ="/blog/newpost">New Post</a>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <div class="controls">
+        <a href ="/blog/userchange">Change Username</a>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <div class="controls">
+        <a href ="/blog/pwchange">Change Password</a>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <div class="controls">
+        <a href ="/blog/post-history">Blog Post History & Data</a>
+      </div>
+    </div>
+  {% endblock %}
+
+

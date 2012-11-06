@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+  {% block title %}
+      <title>Post History & Data | {{ blog_name }}</title>
+  {% endblock %}
+
+  {% block meta_desc %}
+      <meta name="description" content="{{blog_desc}}">
+  {% endblock %}
+
+  {% block main %}
+    <p class="message">Posts Sorted By Popularity</p>
+    {% for item in blog_entries %}
+      <article>
+        <div class="tag_container">
+          <a class="post_tag" href="/blog/tags/{{item.tag}}">{{item.tag}}</a>
+        </div>
+        <div class="row-fluid blog_post">
+          <div class="span8">
+            <div>
+	     <h3 class="post_subject">{{item.subject}}</h3>
+	     <p class="post_created">{{item.created.strftime("%b %d,%Y")}}</p>
+	   </div>
+            <div>Total Visits: {{item.visits}}</div>
+          </div>
+        </div>
+      </article>
+    {% endfor %}
+  {% endblock %}
+
+
