@@ -21,7 +21,7 @@ import blog_models
 
 def generate_template(template_name, **kwargs):
     """Template generation helper function"""
-    path = os.path.join(os.path.dirname(__file__), 'static/html/blog')
+    path = os.path.join(os.path.dirname(__file__), 'templates/blog')
     j_loader = jinja2.Environment(loader=jinja2.FileSystemLoader(path),
                                   autoescape=False)
     jinja_environment = j_loader
