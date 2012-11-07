@@ -24,8 +24,7 @@ def generate_template(template_name, **kwargs):
     path = os.path.join(os.path.dirname(__file__), 'templates/blog')
     j_loader = jinja2.Environment(loader=jinja2.FileSystemLoader(path),
                                   autoescape=False)
-    jinja_environment = j_loader
-    template = jinja_environment.get_template(template_name)
+    template = j_loader.get_template(template_name)
     return template.render(**kwargs)
 
 
