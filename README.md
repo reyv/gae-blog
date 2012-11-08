@@ -41,4 +41,4 @@ Once the app has been uploaded to your App Engine Account, do the following step
 Sample Site
 ============
 
-A sample version of this blog is located at http://gae-simple-blog.appspot.com/blog
+A sample version of this blog is located at http://gae-simple-blog.appspot.com
