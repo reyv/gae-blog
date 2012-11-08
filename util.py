@@ -181,9 +181,18 @@ def send_mail(email, email_subject, email_message):
 # URL Exception Handling
 
 
-def handle_error(request, response, exception):
+def handle_error404(request, response, exception):
     """Handles errors for URL requests that are not handled by server"""
-    status_code = exception.status_int or 500
+    status_code = 404
+    logging.exception(exception)
+    var = {'status_code': status_code}
+    response.write(generate_template('error.html', **var))
+    response.set_status(status_code)
+
+
+def handle_error500(request, response, exception):
+    """Handles errors for URL requests that are not handled by server"""
+    status_code = 500
     logging.exception(exception)
     var = {'status_code': status_code}
     response.write(generate_template('error.html', **var))
