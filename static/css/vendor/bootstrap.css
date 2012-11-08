@@ -2821,13 +2821,13 @@ table [class*=span],
 .dropdown-submenu:hover > a {
   color: #ffffff;
   text-decoration: none;
-  background-color: #0088cc;
-  background-color: #0081c2;
-  background-image: -moz-linear-gradient(top, #0088cc, #0077b3);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
-  background-image: -webkit-linear-gradient(top, #0088cc, #0077b3);
-  background-image: -o-linear-gradient(top, #0088cc, #0077b3);
-  background-image: linear-gradient(to bottom, #0088cc, #0077b3);
+  background-color: #00B4E5;
+  background-color: #00B4E5;
+  background-image: -moz-linear-gradient(top, #0088cc, #00B4E5;);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#00B4E5;));
+  background-image: -webkit-linear-gradient(top, #0088cc, #00B4E5;);
+  background-image: -o-linear-gradient(top, #0088cc, #00B4E5;);
+  background-image: linear-gradient(to bottom, #0088cc, ##00B4E5;);
   background-repeat: repeat-x;
   filter: progid:dximagetransform.microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0);
 }
@@ -4588,14 +4588,15 @@ input[type="submit"].btn.btn-mini {
 
 .navbar-inverse .nav > li > a:focus,
 .navbar-inverse .nav > li > a:hover {
-  color: #ffffff;
+  color: #00B4E5;
   background-color: transparent;
 }
 
 .navbar-inverse .nav .active > a,
 .navbar-inverse .nav .active > a:hover,
 .navbar-inverse .nav .active > a:focus {
-  color: #ffffff;
+  color: #00B4E5;
+  font-weight: bold;
   background-color: #111111;
 }
 
