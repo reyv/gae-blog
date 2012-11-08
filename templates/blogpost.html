@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+  {% block title %}
+      <title>{{blog_post.subject}} | {{ blog_name }}</title>
+  {% endblock %}
+
+  {% block meta_desc %}
+      <meta name="description" content="{{blog_post.content[:145]}}">
+  {% endblock %}
+
+  {% block main %}
+    {% if user %}
+      <div class="message"> <a href="/blog/post-change?q={{blog_post.post_id}}">Edit Post</a></div>
+      <br />
+    {% endif %}
+    <article>
+      <div class="row-fluid">
+	<div class="span4">
+	  <img class="perma_post_image img-rounded" src="{{blog_post.image_url}}" width="250" height="350" alt="{{blog_post.tag}}"/>
+	</div>
+	
+	<div class="span8">
+            <h3 class="post_subject">{{blog_post.subject}}</h3>
+	  <div><b>By:</b> <a href="{{blog_author_link}}">{{blog_post.author}}</a></div>
+	  <div><b>Date:</b> {{blog_post.created.strftime("%b %d,%Y")}}</div>
+	  <div><b>Tag:</b> <a href="/blog/tags/{{blog_post.tag}}">{{blog_post.tag}}</a></div>
+	</div>
+      </div>
+
+      <div class="post_content">{{blog_post.content}}</di>
+      <hr />
+
+      <span class='st_googleplus_hcount' displayText='Google +'></span>
+      <span class='st_facebook_hcount' displayText='Facebook'></span>
+      <span class='st_twitter_hcount' displayText='Tweet'></span>
+      <span class='st_linkedin_hcount' displayText='LinkedIn'></span>
+      <span class='st_sharethis_hcount' displayText='ShareThis'></span>
+    </article>	
+  {% endblock %}
+
+

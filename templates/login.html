@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+  {% block title %}
+      <title>Administrator Login | {{ blog_name }}</title>
+  {% endblock %}
+
+  {% block meta_desc %}
+      <meta name="description" content="{{blog_desc}}">
+  {% endblock %}
+
+  {% block main %}
+    <span class="page">login</span>
+    <h3>Admin Login</h3>
+      <form method="post">
+        <div class="control-group">
+          <label class="control-label bold" for="inputText">Username</label>
+          <div class="controls">
+           <input class="input-large" type="text" name="username" value="{{username}}" placeholder="Username..." required />
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label bold" for="inputText">Password</label>
+          <div class="controls">
+           <input class="input-large" type="password" name="password" placeholder="Password..." required />
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label"></label>
+          <div class="controls">
+            <input class="btn btn-info" type="submit" value="Login">
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label"></label>
+          <div class="controls">
+            <div class="error">{{error_login}}</div>
+          </div>
+        </div>
+      </form>
+  {% endblock %}
+
+
