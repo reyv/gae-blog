@@ -13,7 +13,7 @@
     {% for item in blog_entries %}
       <article>
 	<div class="tag_container">
-	  <a class="post_tag" href="/blog/tags/{{item.tag}}">{{item.tag}}</a>
+	  <a class="post_tag" href="/tags/{{item.tag}}">{{item.tag}}</a>
 	</div>
 	<div class="row-fluid blog_post">
 	  <div class="span4">
@@ -25,7 +25,7 @@
 	      <p class="post_created">{{item.created.strftime("%b %d,%Y")}}</p>
 	    </div>
 	    <div class="post_content">{{item.content[:350]+'...'}}</div>
-	    <div class="post_readmore"><a href="/blog/{{item.post_id}}">Read More</a></div>
+	    <div class="post_readmore"><a href="/{{item.post_id}}">Read More</a></div>
 	  </div>
 	</div>
       </article>

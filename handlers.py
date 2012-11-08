@@ -54,7 +54,7 @@ class BaseRequestHandler(webapp2.RequestHandler):
 
     def check_if_admin(self, template):
         if not self.check_secure_cookie():
-            self.redirect('/blog')
+            self.redirect('/')
             return
         else:
             self.blog_values['user'] = 'admin'
@@ -108,7 +108,7 @@ class TagHandler(BaseRequestHandler):
         tag_list = dict(util.generate_tag_list())
         self.check_admin_status()
         if tag_name not in tag_list.keys():
-            self.redirect('/blog')
+            self.redirect('/')
             return
         else:
             blog_entries = util.tag_cache(tag_name)
@@ -121,7 +121,7 @@ class ArchiveHandler(BaseRequestHandler):
         archive_list = dict(util.generate_archive_list())
         self.check_admin_status()
         if archive_year not in archive_list.keys():
-            self.redirect('/blog')
+            self.redirect('/')
             return
         else:
             blog_entries = util.archive_cache(archive_year)
@@ -135,7 +135,7 @@ class NewPostHandler(BaseRequestHandler):
             self.blog_values['user'] = 'admin'
             self.generate('newpost.html', {})
         else:
-            self.redirect('/blog/login')
+            self.redirect('/login')
             return
 
     def post(self):
@@ -171,7 +171,7 @@ class EditPostHandler(BaseRequestHandler):
                            'image_url': blog_post.image_url,
                            'tag': blog_post.tag})
         else:
-            self.redirect('/blog/login')
+            self.redirect('/login')
             return
 
     def post(self):
@@ -185,7 +185,7 @@ class LoginHandler(BaseRequestHandler):
     """Admin Login Page Handler"""
     def get(self):
         if self.check_secure_cookie():
-            self.redirect('/blog')
+            self.redirect('/')
             return
         else:
             self.generate('login.html', {})
@@ -202,7 +202,7 @@ class LoginHandler(BaseRequestHandler):
                 # var added to 'admin' to provide unique cookie for each login
                 var = util.random_letters()
                 self.set_secure_cookie('user_id', 'admin' + var)
-                self.redirect('/blog/admin-pref')
+                self.redirect('/admin-pref')
                 return
         else:
             self.generate('login.html',
@@ -214,7 +214,7 @@ class LogoutHandler(BaseRequestHandler):
     def get(self):
         self.remove_secure_cookie('user_id')
         self.blog_values['user'] = None
-        self.redirect('/blog')
+        self.redirect('/')
         return
 
 
@@ -288,5 +288,5 @@ class AdminHandler(BaseRequestHandler):
                              admin_pw_hash=pw_hash,
                              key_name='admin_key_name')
         admin.put()
-        self.redirect('/blog')
+        self.redirect('/')
         return

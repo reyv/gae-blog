@@ -28,23 +28,23 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </a>
-            <a class="brand" href="/blog">{{blog_name}}</a>
+            <a class="brand" href="/">{{blog_name}}</a>
             <div class="nav-collapse collapse">
               <ul class="nav top_menu">
-                <li><a href="/blog">Home</a></li>
-                <li><a href="/blog/about">About</a></li>
-                <li><a href="/blog/contact">Contact</a></li>
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/contact">Contact</a></li>
                   {% if user %}
                     <li class="dropdown">
                       <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<b class="caret"></b></a>
                       <ul class="dropdown-menu">
-                            <li><a href="/blog/newpost">New Post</a></li>
-                            <li><a href="/blog/admin-pref">Preferences</a></li>
-                            <li><a href="/blog/logout">Logout</a></li>
+                            <li><a href="/newpost">New Post</a></li>
+                            <li><a href="/admin-pref">Preferences</a></li>
+                            <li><a href="/logout">Logout</a></li>
                       </ul>
                     </li>
                   {% else %}
-                    <li class="login"><a href="/blog/login">Login</a></li>
+                    <li class="login"><a href="/login">Login</a></li>
                   {% endif %}
               </ul>
               <a class="main_social" href="{{twitter_url}}" target="_blank"><img src="/static/img/main_social/twitter.png"></a>
@@ -67,12 +67,12 @@
                 <li class="nav-header">Tags</li>
                     <!--Automatically inserts new tags in the side bar once a tag is created-->
                     {% for item in tag_list %}
-	              <li><a href="/blog/tags/{{item[0]}}">{{item[0]}} ({{item[1]}})</a></li>
+	              <li><a href="/tags/{{item[0]}}">{{item[0]}} ({{item[1]}})</a></li>
 	           {% endfor %}
 	       <li class="nav-header">Archive</li>
                     <!--Automatically inserts new archive years in the side bar once a tag is created-->
                     {% for item in archive_list %}
-	              <li><a href="/blog/archive/{{item[0]}}">{{item[0]}} ({{item[1]}})</a></li>
+	              <li><a href="/archive/{{item[0]}}">{{item[0]}} ({{item[1]}})</a></li>
 	           {% endfor %}
             </div><!--/.well -->
           </div><!--/span-->

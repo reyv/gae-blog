@@ -226,7 +226,7 @@ def post_preview(subject, content, image_url, tag):
                                           tag=tag,
                                           key_name='preview')
     preview.put()
-    return '/blog/newpost/preview'
+    return '/newpost/preview'
 
 
 def post_update(subject, content, image_url, tag, update):
@@ -239,7 +239,7 @@ def post_update(subject, content, image_url, tag, update):
     blog_post.tag = tag
     blog_post.image_url = image_url
     blog_post.put()
-    return '/blog/{post_id}'.format(post_id=update)
+    return '/{post_id}'.format(post_id=update)
 
 
 def post_new(subject, content, image_url, tag):
@@ -261,4 +261,4 @@ def post_new(subject, content, image_url, tag):
     archive_year = blog_entry.created.strftime('%Y')
     archive_cache(archive_year, True)
     visits_cache(True)
-    return '/blog/{post_id}'.format(post_id=post_id)
+    return '/{post_id}'.format(post_id=post_id)

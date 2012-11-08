@@ -7,21 +7,21 @@ import util
 
 
 routes = [('/', handlers.BlogPostHandler),
-          ('/blog/newpost', handlers.NewPostHandler),
-          ('/blog/newpost/preview', handlers.PreviewHandler),
-          ('/blog/about', handlers.AboutHandler),
-          ('/blog/contact', handlers.ContactHandler),
-          ('/blog/login', handlers.LoginHandler),
-          ('/blog/logout', handlers.LogoutHandler),
-          ('/blog/admin', handlers.AdminHandler),
-          ('/blog/admin-pref', handlers.AdminPrefHandler),
-          ('/blog/pwchange', handlers.PasswordChangeHandler),
-          ('/blog/userchange', handlers.UsernameChangeHandler),
-          ('/blog/post-history', handlers.PostHistoryHandler),
-          ('/blog/post-change', handlers.EditPostHandler),
-          ('/blog/(\d+)', handlers.PermalinkHandler),
-          ('/blog/tags/(.*)', handlers.TagHandler),
-          ('/blog/archive/(\d{4})', handlers.ArchiveHandler)]
+          ('/newpost', handlers.NewPostHandler),
+          ('/newpost/preview', handlers.PreviewHandler),
+          ('/about', handlers.AboutHandler),
+          ('/contact', handlers.ContactHandler),
+          ('/login', handlers.LoginHandler),
+          ('/logout', handlers.LogoutHandler),
+          ('/admin', handlers.AdminHandler),
+          ('/admin-pref', handlers.AdminPrefHandler),
+          ('/pwchange', handlers.PasswordChangeHandler),
+          ('/userchange', handlers.UsernameChangeHandler),
+          ('/post-history', handlers.PostHistoryHandler),
+          ('/post-change', handlers.EditPostHandler),
+          ('/(\d+)', handlers.PermalinkHandler),
+          ('/tags/(.*)', handlers.TagHandler),
+          ('/archive/(\d{4})', handlers.ArchiveHandler)]
 
 debug = os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
 
