@@ -7,7 +7,7 @@ blog_desc = 'This is my blog. This is my blog. This is my blog. This is my.'
 
 #Author name
 blog_author = 'Author A'
-blog_author_link = '/blog/about'  # An HTTP link to Author BIO
+blog_author_link = '/about'  # An HTTP link to Author BIO
 
 #Default Admin Credentials. Password and Username should be
 #changed using the "Change Password" and "Change Username" links under the
