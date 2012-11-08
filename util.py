@@ -12,8 +12,8 @@ from google.appengine.api import memcache
 from google.appengine.ext import db
 from google.appengine.api import mail
 
-import blog_config
-import blog_models
+import config
+import models
 
 
 #Template variables
@@ -21,7 +21,7 @@ import blog_models
 
 def generate_template(template_name, **kwargs):
     """Template generation helper function"""
-    path = os.path.join(os.path.dirname(__file__), 'templates/blog')
+    path = os.path.join(os.path.dirname(__file__), 'templates')
     j_loader = jinja2.Environment(loader=jinja2.FileSystemLoader(path),
                                   autoescape=False)
     template = j_loader.get_template(template_name)
@@ -35,12 +35,12 @@ def random_letters():
     """Generates random letters for cookie name to provide unique
        name for each login.
     """
-    return ''.join(random.choice(letters) for x in blog_config.cookie_secret)
+    return ''.join(random.choice(letters) for x in config.cookie_secret)
 
 
 def hash_str(s):
     """Hashing of cookies for Admin login."""
-    return hmac.new(blog_config.cookie_secret, s).hexdigest()
+    return hmac.new(config.cookie_secret, s).hexdigest()
 
 
 def make_secure_val(s):
@@ -57,7 +57,7 @@ def check_secure_val(h):
 #Hashing functions - user
 
 
-def make_salt(length=blog_config.salt_length):
+def make_salt(length=config.salt_length):
     """Makes a salt for passwords that is stored in the db"""
     return ''.join(random.choice(letters) for x in xrange(length))
 
@@ -167,12 +167,12 @@ def send_mail(email, email_subject, email_message):
     """Send mail function"""
     match = re.match(r'\w+\.?\w+@\w+\.\w{2,3}', email)
     if match:
-        message = mail.EmailMessage(sender=blog_config.email_from,
+        message = mail.EmailMessage(sender=config.email_from,
                                     subject=email_subject)
-        message.to = blog_config.email_to
+        message.to = config.email_to
         message.html = email_message + '<br /><br /> The sender is ' + email
         message.send()
-        e = blog_models.SubscribeEmail(email=email)
+        e = models.SubscribeEmail(email=email)
         e.put()
         return 'Thank you for contacting us.'
     else:
@@ -220,7 +220,7 @@ def post_preview(subject, content, image_url, tag):
     """Creates a Preview Entity of the kind PostPreview
        and stores in into the db.
     """
-    preview = blog_models.PostPreview(subject=subject,
+    preview = models.PostPreview(subject=subject,
                                           content=content,
                                           image_url=image_url,
                                           tag=tag,
@@ -233,7 +233,7 @@ def post_update(subject, content, image_url, tag, update):
     """Helper function to fetch an existing post and
        modifies it's contents.
     """
-    blog_post = blog_models.BlogPost.get_by_id(update)
+    blog_post = models.BlogPost.get_by_id(update)
     blog_post.subject = subject
     blog_post.content = content
     blog_post.tag = tag
@@ -246,7 +246,7 @@ def post_new(subject, content, image_url, tag):
     """Helper function that creates a new Entity for
        a new blog post.
     """
-    blog_entry = blog_models.BlogPost(subject=subject,
+    blog_entry = models.BlogPost(subject=subject,
                                       content=content,
                                       image_url=image_url,
                                       tag=tag)

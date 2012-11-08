@@ -28,7 +28,7 @@ handlers:
   expiration: "7d"
   
 - url: .*
-  script: blog.app
+  script: main.app
   
 libraries:
 - name: jinja2
