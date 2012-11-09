@@ -215,7 +215,7 @@ def post_helper(subject, content, tag, image_url, preview, update=None):
 def blog_post_param(request):
     subject = request.get('subject')
     content = request.get('content')
-    content = content.replace('\n', '<br>')
+    content = content.replace('\n', '<br>').replace('\"', '\'')
     image_url = request.get('image_url')
     tag = request.get('tag')
     if subject and content and image_url and tag:
